@@ -5,7 +5,6 @@
 #include <vector>
 #include <limits>
 
-#include "pugixml.hpp"
 namespace tomato {
 
 class NotImplementedException : public std::logic_error {
@@ -13,34 +12,6 @@ public:
     NotImplementedException () : std::logic_error{
         "Function not yet implemented."} {}
 };
-
-namespace xml {
-
-pugi::xml_node load_xml(const std::string& path) {
-    pugi::xml_document doc;
-    doc.load_file(path.c_str());
-    pugi::xml_node node = doc.document_element();
-    return node;
-}
-
-void set_text(pugi::xml_node& root, const std::string& tag, 
-    std::string text) {
-    root.child(tag.c_str()).text().set(text.c_str());
-}
-
-void set_text(pugi::xml_node& root, const std::string& tag, 
-    int text) {
-    root.child(tag.c_str()).text().set(std::to_string(text).c_str());
-}
-
-void set_text(pugi::xml_node& node, int text) {
-    node.text().set(std::to_string(text).c_str());
-}
-
-void set_text(pugi::xml_node& node, std::string text) {
-    node.text().set(text.c_str());
-}
-} // namespace xml
 
 namespace util {
 

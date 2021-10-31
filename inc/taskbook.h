@@ -6,40 +6,35 @@
 #include "inc/util.h"
 #include "inc/template.h"
 #include "inc/task.h"
-#include "pugixml.hpp"
+#include "inc/xml_wrapper.h"
 namespace tomato {
 
 class TaskBook {
-    pugi::xml_document doc_;
-    pugi::xml_node id_;
-    pugi::xml_node tasks_;
+    xml::Doc doc_;
 public:
     TaskBook() {
-        pugi::xml_parse_result result 
-            = doc_.load_file(TEMPLATE::taskbook.c_str());
-        std::string status = result.description();
-        assert(status == "No error");
-        std::cout << result.description() << std::endl;
-        id_ = doc_.child("root").child("id");
-        tasks_ = doc_.child("root").child("tasks");
+        doc_.load_path(TEMPLATE::taskbook);
     }
 
     ~TaskBook() {
-        doc_.save_file(TEMPLATE::taskbook.c_str());
+        doc_.save_file(TEMPLATE::taskbook);
     }
 
     int get_id() {
-        auto id = id_.text().as_int(); 
+        std::string id_str = doc_.get_node("id").value();
+        auto id = std::stoi(id_str);
         auto new_id = id+1;
-        xml::set_text(id_, std::to_string(new_id));
-        id_.print(std::cout);
+        doc_.set_text(TAG::id, new_id);
         return id;
     }
 
     void add_task(Task& task) {
-        task.node().print(std::cout);
-        tasks_.append_copy(task.node());
-        tasks_.print(std::cout);
+        task.node().print();
+        std::cout << "---------------" << std::endl;
+        doc_.print();
+        doc_.append_node("tasks", task.node());
+        std::cout << "---------------" << std::endl;
+        doc_.print();
     }
 
 };

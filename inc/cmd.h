@@ -25,7 +25,7 @@ public:
             create_new_task(cmd);
         } else if (util::startswith(cmd, "newe")) {
             throw NotImplementedException(); 
-        }
+        } 
         std::cout << ">> ";
     }
 
