@@ -7,12 +7,12 @@ int main() {
     tomato::CMD cmd_reader(calendar);
     std::string cmd;
     std::cout << ">> ";
-    while (std::cin >> cmd) {
+    while (std::getline(std::cin, cmd)) {
+        if (cmd.empty()) continue;
         if (cmd == "quit") {
             break;
         } else {
             cmd_reader.execute(cmd);
-        }
-        std::cout << ">> ";
+        } 
     }
 }
