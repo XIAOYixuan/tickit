@@ -10,11 +10,12 @@ class Task {
 private:
     pugi::xml_node root_;
 public:
-    Task(std::string epic, std::string discription) {
+    Task(std::string epic, std::string description) {
         root_ = xml::load_xml(TEMPLATE::task);
-
-        xml::set_text(root, "epic", epic);
-        xml::set_text(root, "discription", discription);
+        xml::set_text(root_, TAG::epic, epic);
+        // root_.print(std::cout);
+        xml::set_text(root_, TAG::description, description);
+        // root_.print(std::cout);
     }
 };
 

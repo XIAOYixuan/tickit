@@ -1,15 +1,15 @@
 <?xml version="1.0" standalone="yes"?>
 <task>
-    <title></title>
-    <id></id>
+    <title>none</title>
+    <id>none</id>
     <description>
-        
+    none  
     </description>
     <date>today</date>
     <epic>none</epic>
     <status>todo</status>
-    <label></label>
+    <label>none</label>
     <start>today</start>
-    <end></end>
-    <attach></attach>
+    <end>none</end>
+    <attach>none</attach>
 </task>
