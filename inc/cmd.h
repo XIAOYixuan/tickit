@@ -40,8 +40,9 @@ private:
             // use vim
             throw NotImplementedException();
         } else {
+            auto id = taskbook_.get_id();
             assert(text.size() >= 3);
-            auto task = Task(text[1], util::join(text, 2));
+            auto task = Task(id, text[1], util::join(text, 2));
             taskbook_.add_task(task);
         }
     }
