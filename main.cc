@@ -4,7 +4,8 @@
 #include "inc/calendar.h"
 int main() {
     tomato::Calendar calendar;
-    tomato::CMD cmd_reader(calendar);
+    tomato::TaskBook taskbook;
+    tomato::CMD cmd_reader(calendar, taskbook);
     std::string cmd;
     std::cout << ">> ";
     while (std::getline(std::cin, cmd)) {

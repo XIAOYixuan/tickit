@@ -1,0 +1,2 @@
+DEF_TYPE_NAME(task, "templates/today.task.xml")
+DEF_TYPE_NAME(taskbook, "bookcase/taskbook.xml")

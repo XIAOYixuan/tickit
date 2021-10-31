@@ -8,14 +8,16 @@
 #include "inc/util.h"
 #include "inc/task.h"
 #include "inc/calendar.h"
+#include "inc/taskbook.h"
 namespace tomato {
 
 class CMD {
 private:
     Calendar& calendar_;
-
+    TaskBook& taskbook_;
 public:
-    CMD(Calendar& calendar) : calendar_(calendar) {
+    CMD(Calendar& calendar, TaskBook& taskbook) 
+        : calendar_(calendar), taskbook_(taskbook) {
     }
     
     void execute(const std::string& cmd) {
@@ -40,6 +42,7 @@ private:
         } else {
             assert(text.size() >= 3);
             auto task = Task(text[1], util::join(text, 2));
+            taskbook_.add_task(task);
         }
     }
 };

@@ -17,8 +17,9 @@ public:
         xml::set_text(root_, TAG::description, description);
         // root_.print(std::cout);
     }
-};
 
+    pugi::xml_node& node() { return root_; }
+};
  
 } // namespace tomato 
 

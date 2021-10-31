@@ -4,9 +4,13 @@
 namespace tomato {
 class TEMPLATE {
 public:
-    static std::string task; 
+#define DEF_TYPE_NAME(TYPE, INIT) static std::string TYPE;
+#include "inc/path.def"
+#undef DEF_TYPE_NAME
 };
-std::string TEMPLATE::task = "templates/today.task.xml";
+#define DEF_TYPE_NAME(TYPE, INIT) std::string TEMPLATE::TYPE = INIT;
+#include "inc/path.def"
+#undef DEF_TYPE_NAME
 
 class TAG {
 public:
