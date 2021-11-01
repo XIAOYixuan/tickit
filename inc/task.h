@@ -6,11 +6,12 @@
 #include "inc/template.h"
 #include "inc/xml_wrapper.h"
 #include "inc/date/date_wrapper.h"
+#include "inc/util.h"
 namespace tomato {
 
 class Task {
 protected:
-    xml::Doc root_;
+    std::shared_ptr<xml::Doc> proot_;
     int id_; 
     std::string title_, epic_, description_, status_;
     std::string start_time_, end_time_;
@@ -52,6 +53,8 @@ public:
     }
 
     Task(int id, DateW& dt, std::string epic, std::string title){
+        proot_.reset(new xml::Doc());
+        xml::Doc& root_ = *proot_;
         root_.load_path(TEMPLATE::task);
 
         id_ = id;
@@ -68,7 +71,10 @@ public:
         root_.set_text(TAG::end, end_time_);
     }
 
-    xml::Node& node() { return root_.get_root(); }
+    xml::Node& node() { 
+        CHECK(proot_ != nullptr);
+        return proot_->get_root(); 
+    }
 
     inline DateW& date() { return date_; }
     inline int& id() { return id_;}
@@ -84,6 +90,8 @@ class Epic : public Task {
 public:
     Epic(xml::Node& epic_node) : Task(epic_node) {}
     Epic(int id, DateW& dt, std::string title) {
+        proot_.reset(new xml::Doc());
+        auto& root_ = *proot_;
         root_.load_path(TEMPLATE::epic);
         id_ = id;
         root_.set_text(TAG::id, std::to_string(id_));

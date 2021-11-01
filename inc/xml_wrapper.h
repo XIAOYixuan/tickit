@@ -42,6 +42,26 @@ public:
         auto raw = pnode_->kids[pt];
         return Node(raw);
     }
+    
+    Node get_kid(std::string tag) {
+        for (auto kid : pnode_->kids) {
+            if (kid->label() == tag) {
+                return Node(kid);
+            }
+        }
+        CHECK(false) << "tag [" << tag << "] not found";
+        return Node(nullptr);
+    }
+
+    std::string get_kid_value(std::string tag) {
+        for (auto kid : pnode_->kids) {
+            if (kid->label() == tag) {
+                return kid->text();
+            }
+        }
+        CHECK(false) << "tag [" << tag << "] not found";
+        return "";
+    }
 
     size_t size() {
         return pnode_->kids.size();

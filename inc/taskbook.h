@@ -66,7 +66,9 @@ public:
 
 private:
     void load_book() {
+        // TODO: very problematic here...
         auto task_nodes = doc_.get_node(TAG::tasks);
+        // task
         for(size_t i = 0; i < task_nodes.size(); ++i) {
             auto task_node = task_nodes.get_item(i);
             tasks_.push_back(TaskPtr(new Task(task_node)));
@@ -75,8 +77,9 @@ private:
         auto epic_nodes = doc_.get_node(TAG::epics);
         for(size_t i = 0; i < epic_nodes.size(); ++i) {
             auto epic_node = epic_nodes.get_item(i);
-            if (!epic_exist(epic_node.label())) {
-                epics_[epic_node.label()] = EpicPtr(new Epic(epic_node));
+            auto epic_name = epic_node.get_kid_value("title");
+            if (!epic_exist(epic_name)) {
+                epics_[epic_name] = EpicPtr(new Epic(epic_node));
             }
             
         }

@@ -99,7 +99,7 @@ public:
         return root_;
     }
 
-    inline NodePtr get_root() { return root_;}
+    inline NodePtr get_root() { CHECK(root_ != nullptr); return root_;}
 
     NodePtr first_node(std::string label) {
         CHECK(label_index_.count(label) != 0);
