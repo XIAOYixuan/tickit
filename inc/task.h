@@ -17,7 +17,7 @@ public:
         root_.set_text(TAG::epic, epic);
         // root_.print(std::cout);
         //xml::set_text(root_, TAG::title, title);
-        root_.set_text(TAG::description, title);
+        root_.set_text(TAG::title, title);
         // root_.print(std::cout);
         root_.set_text(TAG::id, std::to_string(id_));
     }

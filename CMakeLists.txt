@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 3.5)
 project(calendar)
-SET(CMAKE_CXX_STANDARD 11)
+SET(CMAKE_CXX_STANDARD 14)
 SET(CMAKE_BUILD_TYPE Debug)
 SET(GLOGPATH  "/usr/local/Cellar/glog/0.5.0/")
 SET(GFLAGSPATH "/usr/local/Cellar/gflags/2.2.2/")
 #SET(XMLPATH "lib/pugixml-1.11")
-
+add_compile_options("-Wreturn-type")
 # header
 include_directories(inc)
+include_directories(lib)
 include_directories(.)
 include_directories(${GLOGPATH}/include)
 include_directories(${GFLAGSPATH}/include)

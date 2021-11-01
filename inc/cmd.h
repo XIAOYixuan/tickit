@@ -9,6 +9,7 @@
 #include "inc/task.h"
 #include "inc/calendar.h"
 #include "inc/taskbook.h"
+#include "inc/info_printer.h"
 namespace tomato {
 
 class CMD {
@@ -21,21 +22,23 @@ public:
     }
     
     void execute(const std::string& cmd) {
-        if (util::startswith(cmd, "new")) {
-            create_new_task(cmd);
-        } else if (util::startswith(cmd, "newe")) {
+        auto text = util::split(cmd);
+        if (util::startswith(text[0], "new")) {
+            create_new_task(text);
+        } else if (util::startswith(text[0], "newe")) {
             throw NotImplementedException(); 
-        } 
+        } else if (text[0] == "ls") {
+            list_info(text);
+        }
         std::cout << ">> ";
     }
 
 private:
-    void create_new_epic(const std::string& cmd) {
-
+    void list_info(std::vector<std::string>& text) {
+        InfoPrinter infop(calendar_, text);
     }
 
-    void create_new_task(const std::string& cmd) {
-        auto text = util::split(cmd);
+    void create_new_task(std::vector<std::string>& text) {
         if (text.size() == 1) {
             // use vim
             throw NotImplementedException();
