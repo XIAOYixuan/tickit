@@ -24,6 +24,17 @@ public:
         doc_.save_file(TEMPLATE::taskbook);
     }
 
+    // TODO: make it faster
+    std::string get_epic_by_id(int id) {
+        for (auto& it : epics_) {
+            if (it.second->id() == id) {
+                return it.first;
+            }
+        }
+        CHECK(false) << "can't find epics with id [" << id << "]";
+        return "";
+    }
+
     int get_id() {
         std::string id_str = doc_.get_node(TAG::id).value();
         auto id = std::stoi(id_str);

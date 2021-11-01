@@ -40,10 +40,14 @@ protected:
         std::cout << date_ << std::endl;
         auto ptasks = calendar_.get_tasks(date_);
 
-        table_.add_row({TAG::id, TAG::title, TAG::start, TAG::end});
+        table_.add_row({TAG::id, TAG::title, TAG::epic, 
+            TAG::start, TAG::end});
         for(auto& ptask: ptasks) {
             table_.add_row(
-                {std::to_string(ptask->id()), ptask->title(), ptask->start(), ptask->end()});
+                {std::to_string(ptask->id()), 
+                    ptask->title(), 
+                    ptask->epic(), 
+                    ptask->start(), ptask->end()});
         }
         table_[0].format().font_style({tabulate::FontStyle::bold});
         std::cout << table_ << std::endl;

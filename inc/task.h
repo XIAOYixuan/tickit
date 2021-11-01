@@ -52,7 +52,7 @@ public:
         }
     }
 
-    Task(int id, DateW& dt, std::string epic, std::string title){
+    Task(int id, DateW dt, std::string epic, std::string title){
         proot_.reset(new xml::Doc());
         xml::Doc& root_ = *proot_;
         root_.load_path(TEMPLATE::task);
@@ -81,6 +81,7 @@ public:
     inline std::string& title() { return title_; }
     inline std::string& start() { return start_time_; }
     inline std::string& end() { return end_time_; }
+    inline std::string& epic() { return epic_; }
 
 };
 

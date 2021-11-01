@@ -27,6 +27,12 @@ public:
         }
     }
 
+    DateW(year_month_day ymd) {
+        year_ = int(ymd.year());
+        month_ = m_int(ymd.month());
+        day_ = d_int(ymd.day());
+    }
+
     DateW(int y, unsigned int m, unsigned int d) {
         year_ = y;
         month_ = m;
@@ -62,7 +68,10 @@ public:
 
     static DateW& today();
 
+    static DateW to_date(std::string s);
+
     friend std::ostream& operator<<(std::ostream& os, const DateW& dt);
+    friend DateW operator+(const DateW& lhs, uint days);
 
 private:
     uint m_int(month target) {
@@ -80,17 +89,69 @@ private:
         CHECK(false) << "month not correct";
         return 0;
     }
+
+    void add_one_day() {
+        day_ ++;
+
+        if (0 < day_ && day_ < 28) {
+            return ;
+        }
+
+        if (month_ == 2 && day_ == 29) {
+            if (year_ % 400 == 0) return ;
+            if (year_ % 4 == 0 && year_ % 100 != 0) return ;
+        } 
+
+        if (day_ > DateW::days_in_month_[month_]) {
+            day_ = 1;
+            month_ ++;
+            if (month_ == 13) {
+                month_ = 1;
+                year_ ++;
+            }
+            return ;
+        }
+        return ;
+    }
+
+    static std::vector<int> days_in_month_;
 };
 
 DateW DateW::today_ = DateW();
+
 DateW& DateW::today() {
     return DateW::today_;
 }
 
+DateW DateW::to_date(std::string s) {
+    DateW ret;
+    if (s == "today") {
+        return DateW::today();
+    } if (s == "to") {
+        return DateW::today() + 1; 
+    } else {
+        auto nums = util::split(s, '.');
+        CHECK(nums.size() == 2) << "original s :" << s;
+        ret.year_ = DateW::today().wyear();
+        ret.month_ = std::stoi(nums[0]);
+        ret.month_ = std::stoi(nums[1]);
+        return ret;
+    }
+}
+std::vector<int> DateW::days_in_month_ = std::vector<int>{31,28,31,30,31,30,31,31,30,31,30,31};
 std::ostream& operator<<(std::ostream& os, const DateW& dt) {
         os << dt.year_ << "/" << dt.month_ << "/" << dt.day_;
         return os;
 }
+
+DateW operator+(const DateW& lhs, uint days) {
+    auto ret = lhs;
+    for (uint i = 0; i < days; ++i) {
+        ret.add_one_day();
+    }
+    return ret; 
+}
+
 
 } // namespace tomato 
 #endif // TOMATO_DATE_WRAPPER_H
