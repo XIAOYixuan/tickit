@@ -21,8 +21,12 @@ public:
         return pnode_;
     }
 
-    void print() {
-        naive_xml::print_node(pnode_);
+    inline void print(std::ostream& fout) {
+        naive_xml::print_node(fout, pnode_);
+    }
+    
+    inline void print() {
+        print(std::cout);
     }
 
     std::string value() {
@@ -52,6 +56,7 @@ public:
     Node get_node(std::string name) {
         // print();
         auto pnode = parser_.first_node(name);
+        assert(pnode);
         Node ret(pnode);
         return ret;
     }
@@ -71,11 +76,19 @@ public:
         set_text(dest, std::to_string(text));
     }
 
+    void print(std::ostream& fout) {
+        parser_.print(fout);
+    }
+
     void print() {
-        parser_.print();
+        parser_.print(std::cout);
     }
 
     void save_file(std::string path) {
+        std::ofstream fout;
+        fout.open(path);
+        print(fout);
+        fout.close();
     }
 };
 

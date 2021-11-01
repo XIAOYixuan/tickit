@@ -54,27 +54,27 @@ public:
     std::vector<NodePtr> kids;
 };
 
-void print_node(NodePtr node, int indent=0) {
+void print_node(std::ostream& fout, NodePtr node, int indent=0) {
     int cnt = indent;
     while(cnt-->0) {
-        std::cout <<" ";
+        fout <<" ";
     }
 
-    std::cout << node->start_token();
+    fout << node->start_token();
     if (node->text().empty()) {
-        std::cout << std::endl;
+        fout << std::endl;
         for(auto kid : node->kids) {
-            print_node(kid, indent+4);
+            print_node(fout, kid, indent+4);
         }
         cnt = indent;
         while(cnt-->0) {
-            std::cout <<" ";
+            fout <<" ";
         }
     } else {
         assert(node->kids.empty());
-        std::cout << node->text();
+        fout << node->text();
     }
-    std::cout << node->end_token() << std::endl;
+    fout << node->end_token() << std::endl;
 }
 
 class Parser {
@@ -105,8 +105,8 @@ public:
         return label_index_.at(label)[0];
     }
 
-    inline void print() {
-        print_node(root_);
+    inline void print(std::ostream& fout) {
+        print_node(fout, root_);
     }
 
 private:
