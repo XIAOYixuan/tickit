@@ -13,6 +13,7 @@ namespace tomato {
 class TaskBook {
     xml::Doc doc_;
     std::vector<TaskPtr> tasks_;
+    std::unordered_map<int, TaskPtr> id_tasks_;
     std::unordered_map<std::string, EpicPtr> epics_;
 public:
     TaskBook() {
@@ -21,6 +22,10 @@ public:
     }
 
     ~TaskBook() {
+        save();
+    }
+
+    void save() {
         doc_.save_file(TEMPLATE::taskbook);
     }
 
@@ -59,6 +64,15 @@ public:
         // DLOG(INFO) << "-------------------";
         // doc_.print();
         tasks_.push_back(ptask);
+        id_tasks_[ptask->id()] = ptask;
+    }
+    
+    inline TaskPtr get_task_by_id(int id) {
+        return id_tasks_.at(id);
+    }
+
+    inline TaskPtr get_task_by_id(std::string id) {
+        return get_task_by_id(std::stoi(id));
     }
 
     void add_epic(EpicPtr pepic) {
@@ -82,7 +96,9 @@ private:
         // task
         for(size_t i = 0; i < task_nodes.size(); ++i) {
             auto task_node = task_nodes.get_item(i);
-            tasks_.push_back(TaskPtr(new Task(task_node)));
+            auto ptask = TaskPtr(new Task(task_node));
+            tasks_.push_back(ptask);
+            id_tasks_[ptask->id()] = ptask;
         }
 
         auto epic_nodes = doc_.get_node(TAG::epics);

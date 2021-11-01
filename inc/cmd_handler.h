@@ -3,16 +3,19 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 #include "inc/util.h"
 #include "inc/taskbook.h"
 #include "inc/calendar.h"
 #include "inc/info_printer.h"
+#include "inc/cmd_parser.h"
 namespace tomato {
 
 class BaseCMDHandler {
 protected:
     Calendar& calendar_;
     TaskBook& taskbook_;
+    CMDParser parser_;
 public:
     BaseCMDHandler(Calendar& c, TaskBook& t) 
         : calendar_(c), taskbook_(t) {}
@@ -130,27 +133,19 @@ public:
         }
     }
 
-private:
-    // combine epic
-    void regroup_cmd(std::vector<std::string>& cmd) {
-        std::string epic;
-        size_t ed = 2;
-        for (; ed < cmd.size(); ++ed) {
-            epic += cmd[ed];
-            if (cmd[ed].back() == '/') {
-                break;
-            }
-        }
-        epic.pop_back();
-        cmd[2] = epic.substr(1, epic.size()-1);
-        size_t word_cnt = 3; // new + epic
-        ed += 1;
-        for (; ed < cmd.size(); ++word_cnt, ++ed) {
-            cmd[word_cnt] = cmd[ed];
-        }
+    void repeat(std::vector<std::string>& cmd) {
+        // parser_.accept(cmd);
+        // parse cmd
+        // TODO: need a real parser
+        // parser_.regist("rp", 0);
+        // parser_.regist("id", 1);
+        // parser_.regist("date", -1);
 
-        while(cmd.size() > word_cnt) {
-            cmd.pop_back();
+        auto ptask = taskbook_.get_task_by_id(cmd[1]);
+        for (size_t i = 2; i < cmd.size(); ++i) {
+            std::vector<std::string> new_cmd({"new", 
+            cmd[i], ptask->epic(), ptask->title()});
+            create(new_cmd);
         }
     }
 };

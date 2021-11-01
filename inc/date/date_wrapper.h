@@ -134,7 +134,7 @@ DateW DateW::to_date(std::string s) {
         CHECK(nums.size() == 2) << "original s :" << s;
         ret.year_ = DateW::today().wyear();
         ret.month_ = std::stoi(nums[0]);
-        ret.month_ = std::stoi(nums[1]);
+        ret.day_ = std::stoi(nums[1]);
         return ret;
     }
 }

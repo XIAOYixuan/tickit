@@ -37,6 +37,16 @@ public:
             ptask_handler_->create(text);
         } else if (text[0] == "ls") {
             list_info(text);
+        } else if (text[0] == "rp") {
+            ptask_handler_->repeat(text);
+        } else if (text[0] == "save" || text[0] == "w" || text[0] == "wq") {
+            taskbook_.save();
+        } else if (text[0] == "vim") {
+            CHECK(false) << "todo: vim task_id";
+        } else if (text[0] == "lse") {
+            CHECK(false) << "todo: list roadmap" << std::endl; 
+        } else {
+            std::cout << "unk cmd: [" << cmd << "]" << std::endl;
         }
         std::cout << ">> ";
     }
