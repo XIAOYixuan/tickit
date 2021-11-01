@@ -9,7 +9,7 @@
 namespace tomato {
 
 class Task {
-private:
+protected:
     xml::Doc root_;
     int id_; 
     std::string title_, epic_, description_, status_;
@@ -18,6 +18,7 @@ private:
     std::string attach_;
     DateW date_;
 public:
+    Task() = default;
     Task(xml::Node& task_node) {
         for(size_t i = 0; i < task_node.size(); ++i) {
             auto tag = task_node.get_item(i);
@@ -51,20 +52,23 @@ public:
     }
 
     Task(int id, DateW& dt, std::string epic, std::string title){
-        id_ = id;
         root_.load_path(TEMPLATE::task);
-        date_ = dt;
-        root_.set_text(TAG::epic, epic);
-        epic_ = epic;
-        root_.set_text(TAG::title, title);
-        title_ = title;
-        root_.set_text(TAG::id, std::to_string(id_));
 
+        id_ = id;
+        root_.set_text(TAG::id, std::to_string(id_));
+        date_ = dt;
+        root_.set_text(TAG::date, date_.to_string());        
+        epic_ = epic;
+        root_.set_text(TAG::epic, epic);
+        title_ = title;
+        root_.set_text(TAG::title, title);
         start_time_ = "---";
+        root_.set_text(TAG::start, start_time_);
         end_time_ = "---";
+        root_.set_text(TAG::end, end_time_);
     }
 
-    xml::Node node() { return root_.get_root(); }
+    xml::Node& node() { return root_.get_root(); }
 
     inline DateW& date() { return date_; }
     inline int& id() { return id_;}
@@ -75,6 +79,19 @@ public:
 };
 
 using TaskPtr = std::shared_ptr<Task>;
+
+class Epic : public Task {
+public:
+    Epic(xml::Node& epic_node) : Task(epic_node) {}
+    Epic(int id, DateW& dt, std::string title) {
+        root_.load_path(TEMPLATE::epic);
+        id_ = id;
+        root_.set_text(TAG::id, std::to_string(id_));
+        title_ = title;
+        root_.set_text(TAG::title, title);
+    }
+};
+using EpicPtr = std::shared_ptr<Epic>;
  
 } // namespace tomato 
 

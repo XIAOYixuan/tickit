@@ -46,11 +46,18 @@ public:
     size_t size() {
         return pnode_->kids.size();
     }
+
+    friend std::ostream& operator<<(std::ostream& os, Node& node);
 };
+std::ostream& operator<<(std::ostream& os, Node& node) {
+    node.print(os);
+    return os;
+}
 
 class Doc {
 private:
     naive_xml::Parser parser_; 
+    std::shared_ptr<Node> proot_;
 public:
     Doc() {}
     Doc(std::string path) {
@@ -63,16 +70,18 @@ public:
         parser_.load_path(path);
     }
 
-    Node get_root() {
-        return Node(parser_.get_root());
+    Node& get_root() {
+        if (proot_ == nullptr) {
+            proot_.reset(new Node(parser_.get_root()));
+        }
+        return *proot_;
     }
 
     Node get_node(std::string name) {
         // print();
         auto pnode = parser_.first_node(name);
         CHECK(pnode);
-        Node ret(pnode);
-        return ret;
+        return Node(pnode);
     }
     
     void append_node(std::string dest, Node node) {
@@ -104,7 +113,13 @@ public:
         print(fout);
         fout.close();
     }
+    friend std::ostream& operator<<(std::ostream& os, Doc& doc);
+
 };
+std::ostream& operator<<(std::ostream& os, Doc& doc) {
+    doc.print(os);
+    return os;
+}
 
 
 } // namespace xml

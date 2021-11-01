@@ -26,7 +26,7 @@ public:
             ss >> year_ >> month_ >> day_;
         }
     }
-    
+
     DateW(int y, unsigned int m, unsigned int d) {
         year_ = y;
         month_ = m;
@@ -53,6 +53,11 @@ public:
 
     void print() {
         std::cout << year_ << " " << month_ << " " << day_ << std::endl;
+    }
+
+    std::string to_string() {
+        return std::to_string(year_) + " " + std::to_string(month_)  
+            + " " + std::to_string(day_);
     }
 
     static DateW& today();
