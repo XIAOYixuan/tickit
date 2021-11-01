@@ -2,15 +2,23 @@ cmake_minimum_required(VERSION 3.5)
 project(calendar)
 SET(CMAKE_CXX_STANDARD 11)
 SET(CMAKE_BUILD_TYPE Debug)
+SET(GLOGPATH  "/usr/local/Cellar/glog/0.5.0/")
+SET(GFLAGSPATH "/usr/local/Cellar/gflags/2.2.2/")
 #SET(XMLPATH "lib/pugixml-1.11")
 
 # header
 include_directories(inc)
 include_directories(.)
+include_directories(${GLOGPATH}/include)
+include_directories(${GFLAGSPATH}/include)
 #include_directories(${XMLPATH}/src)
 
 # third-party
 #find_library(XML NAMES pugixml PATHS "${XMLPATH}/build")
+find_library(GLOG NAMES glog PATHS "${GLOGPATH}/lib")
+find_library(GFLAGS NAMES gflags PATHS "${GFLAGSPATH}/lib")
 
 add_executable(calendar main.cc)
 #target_link_libraries(calendar ${XML})
+target_link_libraries(calendar ${GFLAGS})
+target_link_libraries(calendar ${GLOG})

@@ -30,10 +30,10 @@ public:
 
     void add_task(Task& task) {
         task.node().print();
-        std::cout << "---------------" << std::endl;
+        DLOG(INFO) << "-------------------";
         doc_.print();
         doc_.append_node("tasks", task.node());
-        std::cout << "---------------" << std::endl;
+        DLOG(INFO) << "-------------------";
         doc_.print();
     }
 

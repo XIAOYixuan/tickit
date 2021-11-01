@@ -4,6 +4,7 @@
 #include <sstream>
 #include <vector>
 #include <limits>
+#include <glog/logging.h>
 
 namespace tomato {
 

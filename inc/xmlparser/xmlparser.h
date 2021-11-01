@@ -8,6 +8,7 @@
 #include <memory>
 #include <unordered_map>
 #include "inc/template.h"
+#include "inc/util.h"
 namespace tomato {
 namespace naive_xml {
 class Node;
@@ -19,12 +20,12 @@ private:
     std::string text_;
 public:
     Node(std::string token) {
-        assert(token.size() >=3);
+        CHECK(token.size() >=3) << "token size too small";
         label_ = token.substr(1, token.size()-2);
     }
 
     Node(std::string token, std::string text) {
-        assert(token.size() >=3);
+        CHECK(token.size() >=3);
         label_ = token.substr(1, token.size()-2);
         text_ = text;
     }
@@ -71,7 +72,7 @@ void print_node(std::ostream& fout, NodePtr node, int indent=0) {
             fout <<" ";
         }
     } else {
-        assert(node->kids.empty());
+        CHECK(node->kids.empty());
         fout << node->text();
     }
     fout << node->end_token() << std::endl;
@@ -101,7 +102,7 @@ public:
     inline NodePtr get_root() { return root_;}
 
     NodePtr first_node(std::string label) {
-        assert(label_index_.count(label) != 0);
+        CHECK(label_index_.count(label) != 0);
         return label_index_.at(label)[0];
     }
 
@@ -174,7 +175,7 @@ private:
     DfsSig dfs_read(size_t pos) {
         pos = skip_space(pos);
         if (pos >= text_.size()) {
-            assert(false&&"why we're here");
+            CHECK(false) << "why we're here";
         }
 
         if (is_start_token(pos)) {
@@ -191,7 +192,7 @@ private:
                 if (sig.is_text) {
                     nodeptr->set_text(sig.text);
                 } else {
-                    assert(sig.ptr != nullptr) ;
+                    CHECK(sig.ptr != nullptr) ;
                     nodeptr->kids.push_back(sig.ptr);
                 }
             }

@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <memory>
+#include "inc/util.h"
 //#include "rapidxml/rapidxml_ext.h"
 #include "xmlparser/xmlparser.h"
 namespace tomato{
@@ -56,7 +57,7 @@ public:
     Node get_node(std::string name) {
         // print();
         auto pnode = parser_.first_node(name);
-        assert(pnode);
+        CHECK(pnode);
         Node ret(pnode);
         return ret;
     }
