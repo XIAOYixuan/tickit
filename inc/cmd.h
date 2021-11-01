@@ -10,15 +10,18 @@
 #include "inc/calendar.h"
 #include "inc/taskbook.h"
 #include "inc/info_printer.h"
+#include "inc/date/date_wrapper.h"
 namespace tomato {
 
 class CMD {
 private:
     Calendar& calendar_;
     TaskBook& taskbook_;
+
 public:
     CMD(Calendar& calendar, TaskBook& taskbook) 
         : calendar_(calendar), taskbook_(taskbook) {
+        calendar_.load_tasks(taskbook_);
     }
     
     void execute(const std::string& cmd) {
@@ -35,7 +38,11 @@ public:
 
 private:
     void list_info(std::vector<std::string>& text) {
-        InfoPrinter infop(calendar_, text);
+        if (text.size() == 1) {
+            InfoPrinter infop(calendar_, DateW::today());
+        } else {
+            throw NotImplementedException();
+        }
     }
 
     void create_new_task(std::vector<std::string>& text) {
@@ -45,8 +52,9 @@ private:
         } else {
             auto id = taskbook_.get_id();
             CHECK(text.size() >= 3);
-            auto task = Task(id, text[1], util::join(text, 2));
-            taskbook_.add_task(task);
+            TaskPtr ptask(new Task(id, DateW::today(), text[1], util::join(text, 2)));
+            taskbook_.add_task(ptask);
+            calendar_.add_task(ptask);
         }
     }
 };

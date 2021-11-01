@@ -1,6 +1,8 @@
 #ifndef TOMATO_DATE_WRAPPER_H
 #define TOMATO_DATE_WRAPPER_H
 #include <iostream>
+#include <sstream>
+#include <string>
 #include "date/date.h"
 #include "inc/util.h"
 
@@ -14,8 +16,17 @@ class DateW {
 private:
     int year_;
     uint month_, day_;
-
+    static DateW today_;
 public:
+    DateW(std::string text) {
+        if (text == "today") {
+            *this = DateW::today();
+        } else {
+            std::stringstream ss(text);
+            ss >> year_ >> month_ >> day_;
+        }
+    }
+    
     DateW(int y, unsigned int m, unsigned int d) {
         year_ = y;
         month_ = m;
@@ -36,9 +47,15 @@ public:
         day_ = d_int(today.day());
     }
 
+    inline int& wyear() {return year_;}
+    inline uint& wmonth() {return month_;}
+    inline uint& wday() {return day_;}
+
     void print() {
         std::cout << year_ << " " << month_ << " " << day_ << std::endl;
     }
+
+    static DateW& today();
 
     friend std::ostream& operator<<(std::ostream& os, const DateW& dt);
 
@@ -59,6 +76,11 @@ private:
         return 0;
     }
 };
+
+DateW DateW::today_ = DateW();
+DateW& DateW::today() {
+    return DateW::today_;
+}
 
 std::ostream& operator<<(std::ostream& os, const DateW& dt) {
         os << dt.year_ << "/" << dt.month_ << "/" << dt.day_;

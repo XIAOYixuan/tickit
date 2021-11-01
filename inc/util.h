@@ -15,7 +15,6 @@ public:
 };
 
 namespace util {
-
 inline bool startswith(const std::string& original, 
     const std::string& target) {
     return original.rfind(target, 0) == 0;

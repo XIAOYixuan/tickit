@@ -11,9 +11,12 @@ namespace tomato {
 
 class TaskBook {
     xml::Doc doc_;
+    std::vector<TaskPtr> tasks_;
+
 public:
     TaskBook() {
         doc_.load_path(TEMPLATE::taskbook);
+        load_book();
     }
 
     ~TaskBook() {
@@ -28,13 +31,25 @@ public:
         return id;
     }
 
-    void add_task(Task& task) {
-        task.node().print();
+    void add_task(TaskPtr ptask) {
+        ptask->node().print();
         DLOG(INFO) << "-------------------";
         doc_.print();
-        doc_.append_node("tasks", task.node());
+        doc_.append_node("tasks", ptask->node());
         DLOG(INFO) << "-------------------";
         doc_.print();
+        tasks_.push_back(ptask);
+    }
+
+    inline std::vector<TaskPtr>& tasks() { return tasks_; }
+
+private:
+    void load_book() {
+        auto task_nodes = doc_.get_node(TAG::tasks);
+        for(size_t i = 0; i < task_nodes.size(); ++i) {
+            auto task_node = task_nodes.get_item(i);
+            tasks_.push_back(TaskPtr(new Task(task_node)));
+        }
     }
 
 };

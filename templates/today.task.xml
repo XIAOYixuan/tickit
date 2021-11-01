@@ -1,12 +1,12 @@
 <task>
-    <title>a b c d</title>
+    <title>none</title>
     <id>none</id>
     <description>none</description>
     <date>today</date>
     <epic>none</epic>
     <status>todo</status>
     <label>none</label>
-    <start>today</start>
+    <start>none</start>
     <end>none</end>
     <attach>none</attach>
 </task>

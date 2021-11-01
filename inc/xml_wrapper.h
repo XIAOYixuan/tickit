@@ -30,8 +30,21 @@ public:
         print(std::cout);
     }
 
-    std::string value() {
+    inline std::string value() {
         return pnode_->text();
+    }
+
+    inline std::string label() {
+        return pnode_->label();
+    }
+
+    Node get_item(size_t pt) {
+        auto raw = pnode_->kids[pt];
+        return Node(raw);
+    }
+
+    size_t size() {
+        return pnode_->kids.size();
     }
 };
 

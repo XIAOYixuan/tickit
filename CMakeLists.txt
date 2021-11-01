@@ -9,6 +9,7 @@ add_compile_options("-Wreturn-type")
 # header
 include_directories(inc)
 include_directories(lib)
+include_directories(lib/tabulate-1.4/include)
 include_directories(.)
 include_directories(${GLOGPATH}/include)
 include_directories(${GFLAGSPATH}/include)

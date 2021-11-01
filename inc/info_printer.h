@@ -3,22 +3,24 @@
 #include "inc/util.h"
 #include "inc/calendar.h"
 #include "inc/date/date_wrapper.h"
+#include "inc/view/table_printer.h"
 namespace tomato {
 class InfoPrinter {
 private:
     Calendar& calendar_;
 public:
 
-    InfoPrinter(Calendar& calendar, std::vector<std::string> & cmd) 
+    InfoPrinter(Calendar& calendar, DateW& dt) 
         : calendar_(calendar) {
-        if(cmd.size() == 1) {
-            list_info(DateW());
-        }
+        list_info(dt);
     }
 
 private:
-    void list_info(DateW dt) {
+    void list_info(DateW& dt) {
         std::cout << dt << std::endl;
+        auto tasks = calendar_.get_tasks(dt);
+        view::TaskTable task_printer;
+        task_printer.print_info(tasks);
     };
 };
 
