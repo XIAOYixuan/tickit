@@ -19,14 +19,16 @@ protected:
     std::string label_;
     std::string attach_;
     DateW date_;
+    int start_int_, end_int_;
 public:
     Task() = default;
-    Task(xml::Node& task_node) {
-        proot_.reset(new xml::Node(task_node.ptr())); 
+
+    void init_by_node(xml::Node& task_node) {
         for(size_t i = 0; i < task_node.size(); ++i) {
             auto tag = task_node.get_item(i);
             auto label = tag.label();
             auto text = tag.value();
+            if (text == "none") continue;
 
             if (label == TAG::id) {
                 id_ = std::stoi(text);
@@ -42,8 +44,10 @@ public:
                 label_ = text;
             } else if (label == TAG::start) {
                 start_time_ = text;
+                start_int_ = util::time_to_int(start_time_);
             } else if (label == TAG::end) {
                 end_time_ = text;
+                end_int_ = util::time_to_int(end_time_);
             } else if (label == TAG::attachment) {
                 attach_ = text;
             } else if (label == TAG::date) {
@@ -53,11 +57,16 @@ public:
             }
         }
     }
+    Task(xml::Node& task_node) {
+        proot_.reset(new xml::Node(task_node.ptr())); 
+        init_by_node(task_node);
+    }
 
     Task(int id, DateW dt, std::string epic, std::string title){
         pdoc_.reset(new xml::Doc());
         xml::Doc& root_ = *pdoc_;
         root_.load_path(TEMPLATE::task);
+        init_by_node(pdoc_->get_root());
 
         id_ = id;
         root_.set_text(TAG::id, std::to_string(id_));
@@ -65,12 +74,14 @@ public:
         root_.set_text(TAG::date, date_.to_string());        
         epic_ = epic;
         root_.set_text(TAG::epic, epic);
+
         title_ = title;
-        root_.set_text(TAG::title, title);
-        start_time_ = "---";
+        util::extract_leading_time(title_, start_time_, end_time_);
+        root_.set_text(TAG::title, title_);
         root_.set_text(TAG::start, start_time_);
-        end_time_ = "---";
         root_.set_text(TAG::end, end_time_);
+        start_int_ = util::time_to_int(start_time_);
+        end_int_ = util::time_to_int(end_time_);
     }
 
     xml::Node& node() { 
@@ -96,7 +107,8 @@ public:
     inline std::string& end() { return end_time_; }
     inline std::string& epic() { return epic_; }
     inline std::string& status() { return status_; }
-
+    inline int& start_int() { return start_int_; }
+    inline int& end_int() { return end_int_; }
 };
 
 using TaskPtr = std::shared_ptr<Task>;

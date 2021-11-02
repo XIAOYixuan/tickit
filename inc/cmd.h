@@ -59,9 +59,15 @@ private:
             // ls task
             ptask_handler_->print(text);
         } else if (text.size() == 2 && text[1] == TAG::epic) {
+            // ls epic
             pepic_handler_->print(text);
         } else if (text.size() == 2 && util::is_date(text[1])) {
+            // ls specific day
             ptask_handler_->print(text);
+        } else {
+            ptask_handler_->print_duration(text);
+            // ls duration: ls week, ls month, todo
+
         }
     }
 };

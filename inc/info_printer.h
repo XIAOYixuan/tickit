@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
+#include <sstream>
 #include "inc/util.h"
 #include "inc/calendar.h"
 #include "inc/taskbook.h"
@@ -38,14 +39,32 @@ public:
 
 protected:
     void list_info() override {
-        std::cout << date_ << std::endl;
-        std::vector<TaskPtr> ptasks = calendar_.get_tasks(date_);
+        tabulate::Table title;
+        std::stringstream ss;
+        ss << date_ << " " << date_.to_weekday();
+        title.add_row({ss.str()});
+        title.format()
+            .font_style({tabulate::FontStyle::underline})
+            .font_align(tabulate::FontAlign::center)
+            .font_background_color(tabulate::Color::grey)
+            .hide_border_top()
+            .hide_border_left()
+            .hide_border_bottom()
+            .hide_border_right();
+        std::cout << title << std::endl;
 
+        std::vector<TaskPtr> ptasks = calendar_.get_tasks(date_);
         table_.add_row({TAG::id, TAG::title, TAG::status, TAG::epic, 
             TAG::start, TAG::end});
 
         std::sort(std::begin(ptasks), std::end(ptasks), [] (auto& lhs, auto& rhs) {
-            return lhs->status() != "done" && rhs->status() == "done";
+            if (lhs->status() != "done" && rhs->status() == "done") {
+                return true;
+            } else if (lhs->start_int() != rhs->start_int()) {
+                return lhs->start_int() < rhs->start_int();
+            } else {
+                return lhs->end_int() < rhs->end_int();
+            }
         }); 
 
         table_[0].format().font_style({tabulate::FontStyle::bold}).font_align(tabulate::FontAlign::center);

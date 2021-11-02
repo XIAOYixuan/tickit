@@ -66,6 +66,17 @@ public:
             + " " + std::to_string(day_);
     }
 
+    std::string to_month_day() {
+        return std::to_string(month_) + "." + std::to_string(day_);
+    }
+
+    std::string to_weekday() {
+        auto wd = weekday{year{year_}/month_/day_};
+        std::stringstream ss;
+        ss << wd;
+        return ss.str();
+    }
+
     static DateW& today();
 
     static DateW to_date(std::string s);
@@ -140,7 +151,7 @@ DateW DateW::to_date(std::string s) {
 }
 std::vector<int> DateW::days_in_month_ = std::vector<int>{31,28,31,30,31,30,31,31,30,31,30,31};
 std::ostream& operator<<(std::ostream& os, const DateW& dt) {
-        os << dt.year_ << "/" << dt.month_ << "/" << dt.day_;
+        os << dt.year_ << "." << dt.month_ << "." << dt.day_;
         return os;
 }
 

@@ -134,6 +134,19 @@ public:
         }
     }
 
+    void print_duration(std::vector<std::string>& cmd) {
+        // ls week
+        auto cur_date = DateW::today();
+        for (int i = 0; i < 7; i++) {
+            if (i) {
+                std::cout << std::endl;
+            }
+            cmd[1] = cur_date.to_month_day();
+            print(cmd);
+            cur_date = cur_date + 1;
+        }
+    }
+
     void repeat(std::vector<std::string>& cmd) {
         // parser_.accept(cmd);
         // parse cmd
