@@ -53,6 +53,12 @@ public:
             ptask_handler_->drop(text);
         } else if (text[0] == "aktiv") {
             ptask_handler_->aktiv(text);
+        } else if (text[0] == "mv") {
+            // mv id1 id2 id3 date
+            ptask_handler_->move(text);
+        } else if (text[0] == "time") {
+            // time id start time
+            ptask_handler_->set_time(text);
         } else {
             std::cout << "unk cmd: [" << cmd << "]" << std::endl;
         }

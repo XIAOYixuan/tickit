@@ -63,24 +63,8 @@ public:
     }
 
     void drop_task(TaskPtr ptask) {
-        auto date = ptask->date(); 
-        auto& the_month = months_[date.wmonth()];
-        auto& the_day = the_month.days()[date.wday()];
-        auto& all_tasks = the_day->tasks();
-        size_t del_point = all_tasks.size(); 
-        for (size_t i = 0; i < all_tasks.size(); ++i) {
-            if (all_tasks[i] == ptask) {
-                del_point = i;
-                break;
-            }
-        }
-        if (del_point == all_tasks.size()) {
-            LOG(INFO) << "can't found the task " 
-                << ptask->id() << " in the date: " << ptask->date(); 
-            return;
-        }
+        delete_task(ptask);
         archive_.push_back(ptask);
-        all_tasks.erase(all_tasks.begin()+del_point);
     }
 
     void aktiv_task(TaskPtr ptask) {
@@ -101,6 +85,12 @@ public:
         add_task(ptask);
     }
 
+    void move_date(TaskPtr ptask, DateW new_date) {
+         delete_task(ptask);
+         ptask->set_date(new_date);
+         add_task(ptask);
+    }
+
     // TODO: directly do it here
     void add_task(TaskPtr ptask) {
         check_date(ptask->date());
@@ -115,6 +105,26 @@ public:
     inline std::vector<TaskPtr>& get_arch() { return archive_;}
 
 private:
+    void delete_task(TaskPtr ptask) {
+        auto date = ptask->date(); 
+        auto& the_month = months_[date.wmonth()];
+        auto& the_day = the_month.days()[date.wday()];
+        auto& all_tasks = the_day->tasks();
+        size_t del_point = all_tasks.size(); 
+        for (size_t i = 0; i < all_tasks.size(); ++i) {
+            if (all_tasks[i] == ptask) {
+                del_point = i;
+                break;
+            }
+        }
+        if (del_point == all_tasks.size()) {
+            LOG(INFO) << "can't found the task " 
+                << ptask->id() << " in the date: " << ptask->date(); 
+            return;
+        }
+        all_tasks.erase(all_tasks.begin()+del_point);
+    }
+
     inline void check_date(DateW& dt) {
         // TODO: extent to more years? only allow one year now
         CHECK(dt.wyear() == DateW::today().wyear());

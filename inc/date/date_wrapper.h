@@ -62,6 +62,9 @@ public:
     }
 
     std::string to_string() {
+        // NOTE: don't change, if u must change, adjust to load book 
+        // function as well
+        // this func is used in dumpping node to taskbook
         return std::to_string(year_) + " " + std::to_string(month_)  
             + " " + std::to_string(day_);
     }

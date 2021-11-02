@@ -46,7 +46,7 @@ using cmdvec = std::vector<std::string>;
 private:
     // cmd id
     TaskPtr check_cmd_id(cmdvec& cmd) {
-        if (cmd.size() != 2 || !util::is_number(cmd[1])) {
+        if (cmd.size() < 2 || !util::is_number(cmd[1])) {
             LOG(INFO) << "invalid cmd : " << util::join(cmd);
         }
         auto ptask = taskbook_.get_task_by_id(cmd[1]);
@@ -57,6 +57,27 @@ private:
     }
 public:
     TaskHandler(Calendar& c, TaskBook& t) : BaseCMDHandler(c, t) {}
+    
+    void set_time(cmdvec& cmd) {
+        auto ptask = check_cmd_id(cmd);
+        ptask->set_start(cmd[2]);
+    }
+
+    void move(cmdvec& cmd) {
+        if (cmd.size() < 3) {
+            LOG(INFO) << "need >three arguments, move id date";
+        }
+        if (!util::is_date(cmd.back())) {
+            LOG(INFO) << cmd.back() << " is not a date";
+        }
+        auto date = DateW::to_date(cmd.back());
+        for (size_t i = 1; i + 1 < cmd.size(); ++i) {
+            cmd[1] = cmd[i];
+            auto ptask = check_cmd_id(cmd);
+            calendar_.move_date(ptask, date);
+        }
+    }
+
     void drop(cmdvec& cmd) {
         auto ptask = check_cmd_id(cmd);
         if (ptask == nullptr) return;
@@ -177,6 +198,7 @@ private:
                     id, DateW::to_date(time_), epic_, text_));
         taskbook_.add_task(ptask);
         calendar_.add_task(ptask);
+        std::cout << "created " << ptask->id() << " " << ptask->title() << std::endl;
     }
 
     // TODO: reverse cmd to make it faster

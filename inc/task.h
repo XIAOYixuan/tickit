@@ -89,14 +89,21 @@ public:
         return pdoc_->get_root(); 
     }
 
+
     void set_status(std::string st) {
-        if (pdoc_) {
-            pdoc_->set_text(TAG::status, st);
-        } else {
-            CHECK(proot_);
-            proot_->set_kid_text(TAG::status, st);
-        }
+        set_text(TAG::status, st);
         status_ = st;
+    }
+
+    void set_date(DateW& date) {
+        set_text(TAG::date, date.to_string());
+        date_ = date;
+    }
+
+    void set_start(std::string t) {
+        set_text(TAG::start, t);
+        start_time_ = t;
+        start_int_ = util::time_to_int(start_time_);
     }
     
     inline DateW& date() { return date_; }
@@ -109,6 +116,17 @@ public:
     inline std::string& status() { return status_; }
     inline int& start_int() { return start_int_; }
     inline int& end_int() { return end_int_; }
+
+private: 
+    void set_text(std::string label, std::string text) {
+        if (pdoc_) {
+            pdoc_->set_text(label, text);
+        } else {
+            CHECK(proot_);
+            proot_->set_kid_text(label, text);
+        }
+
+    }
 };
 
 using TaskPtr = std::shared_ptr<Task>;
