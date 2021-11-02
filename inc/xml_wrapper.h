@@ -38,6 +38,17 @@ public:
         return pnode_->label();
     }
 
+    void set_kid_text(std::string nlabel, std::string ntext) {
+        for (auto& kid : pnode_->kids) {
+            if (kid->label() == nlabel) {
+                kid->set_text(ntext);
+                return;
+            }
+        }
+        CHECK(false) << "label [" << nlabel << "] not found in <"
+            << label() << ">" << value() << "</" << label() << ">";
+    }
+
     Node get_item(size_t pt) {
         auto raw = pnode_->kids[pt];
         return Node(raw);

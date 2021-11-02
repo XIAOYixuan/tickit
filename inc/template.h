@@ -23,5 +23,15 @@ public:
 #include "inc/tag.def"
 #undef DEF_TYPE_NAME
 
+class VALUE {
+public:
+#define DEF_TYPE_NAME(TYPE, INIT) static std::string TYPE;
+#include "inc/value.def"
+#undef DEF_TYPE_NAME
+};
+#define DEF_TYPE_NAME(TYPE, INIT) std::string VALUE::TYPE = INIT;
+#include "inc/value.def"
+#undef DEF_TYPE_NAME
+
 } // end namespace tomato
 #endif // TOMATO_TEMPLATE_H

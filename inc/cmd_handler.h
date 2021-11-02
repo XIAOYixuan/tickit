@@ -57,10 +57,11 @@ public:
             return;
         } else {
             epic_ = cmd[0].substr(1, cmd[0].size()-1);
-            int cnt = 1;
-            while(cnt < cmd.size() && 
-                cmd[cnt].back() != '/') {
-                epic_ += cmd[cnt];
+            int cnt = 0;
+            while(cnt < cmd.size()) {
+                if(cnt) epic_ += " "  + cmd[cnt];
+                if (cmd[cnt].back() == '/') break;
+                cnt ++;
             }
 
             CHECK(cnt < cmd.size());
@@ -147,6 +148,14 @@ public:
             cmd[i], ptask->epic(), ptask->title()});
             create(new_cmd);
         }
+    }
+
+    void tick(std::vector<std::string>& cmd) {
+        // tick id
+        auto ptask = taskbook_.get_task_by_id(cmd[1]);
+        CHECK(ptask->status() == VALUE::todo);
+        ptask->set_status(VALUE::done);
+        InfoTask info(calendar_, DateW::today());
     }
 };
 

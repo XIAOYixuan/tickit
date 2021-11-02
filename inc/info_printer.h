@@ -29,6 +29,7 @@ class InfoTask : public InfoPrinter {
 private:
     Calendar& calendar_;
     DateW& date_;
+
 public:
     InfoTask(Calendar& calendar, DateW& dt) 
         : calendar_(calendar), date_(dt) {
@@ -38,18 +39,31 @@ public:
 protected:
     void list_info() override {
         std::cout << date_ << std::endl;
-        auto ptasks = calendar_.get_tasks(date_);
+        std::vector<TaskPtr> ptasks = calendar_.get_tasks(date_);
 
-        table_.add_row({TAG::id, TAG::title, TAG::epic, 
+        table_.add_row({TAG::id, TAG::title, TAG::status, TAG::epic, 
             TAG::start, TAG::end});
-        for(auto& ptask: ptasks) {
+
+        std::sort(std::begin(ptasks), std::end(ptasks), [] (auto& lhs, auto& rhs) {
+                if (lhs->status() == "done" && rhs->status() == "done") return lhs < rhs;
+                if (lhs->status() == "done" && rhs->status() != "done") return lhs < rhs;
+                if (lhs->status() != "done" && rhs->status() != "done") return lhs > rhs;
+                return lhs > rhs;
+        }); 
+
+        table_[0].format().font_style({tabulate::FontStyle::bold}).font_align(tabulate::FontAlign::center);
+        for (size_t i = 0; i < ptasks.size(); ++i) {
+            auto& ptask = ptasks[i];
             table_.add_row(
                 {std::to_string(ptask->id()), 
-                    ptask->title(), 
+                    ptask->title(),
+                    ptask->status(),  
                     ptask->epic(), 
                     ptask->start(), ptask->end()});
+            if (ptask->status()  == "done") {
+                table_[i+1].format().font_color(tabulate::Color::green);
+            }
         }
-        table_[0].format().font_style({tabulate::FontStyle::bold});
         std::cout << table_ << std::endl;
     }
 };

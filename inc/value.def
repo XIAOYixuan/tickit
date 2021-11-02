@@ -1,0 +1,2 @@
+DEF_TYPE_NAME(done, "done")
+DEF_TYPE_NAME(todo, "todo")

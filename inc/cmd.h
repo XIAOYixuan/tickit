@@ -45,6 +45,8 @@ public:
             CHECK(false) << "todo: vim task_id";
         } else if (text[0] == "lse") {
             CHECK(false) << "todo: list roadmap" << std::endl; 
+        } else if (text[0] == "tick") {
+            ptask_handler_->tick(text);
         } else {
             std::cout << "unk cmd: [" << cmd << "]" << std::endl;
         }
