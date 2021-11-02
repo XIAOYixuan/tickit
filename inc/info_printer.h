@@ -45,10 +45,7 @@ protected:
             TAG::start, TAG::end});
 
         std::sort(std::begin(ptasks), std::end(ptasks), [] (auto& lhs, auto& rhs) {
-                if (lhs->status() == "done" && rhs->status() == "done") return lhs < rhs;
-                if (lhs->status() == "done" && rhs->status() != "done") return lhs < rhs;
-                if (lhs->status() != "done" && rhs->status() != "done") return lhs > rhs;
-                return lhs > rhs;
+            return lhs->status() != "done" && rhs->status() == "done";
         }); 
 
         table_[0].format().font_style({tabulate::FontStyle::bold}).font_align(tabulate::FontAlign::center);
