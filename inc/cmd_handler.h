@@ -86,6 +86,15 @@ public:
         taskbook_.add_task(ptask);
         calendar_.add_task(ptask);
     }
+
+    void edit(std::vector<std::string>& cmd) {
+        auto id = std::stoi(cmd[1]);
+        auto ptask = taskbook_.get_task_by_id(id);
+        TaskMarkDown md(ptask);
+        auto vimcmd = "vim " + md.path();
+        system(vimcmd.c_str());
+    }
+
     // TODO: error handle
     // std cmd: new date epic title
     void create(std::vector<std::string>& cmd_tokens) override {

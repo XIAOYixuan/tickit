@@ -42,7 +42,7 @@ public:
         } else if (text[0] == "save" || text[0] == "w" || text[0] == "wq") {
             taskbook_.save();
         } else if (text[0] == "vim") {
-            CHECK(false) << "todo: vim task_id";
+            ptask_handler_->edit(text);
         } else if (text[0] == "lse") {
             CHECK(false) << "todo: list roadmap" << std::endl; 
         } else if (text[0] == "tick") {
