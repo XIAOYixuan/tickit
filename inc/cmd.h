@@ -30,6 +30,7 @@ public:
     }
     
     void execute(const std::string& cmd) {
+        // TODO: check cmd grammar
         auto text = util::split(cmd);
         if (util::startswith(text[0], "enew")) {
             pepic_handler_->create(text);
@@ -47,6 +48,9 @@ public:
             CHECK(false) << "todo: list roadmap" << std::endl; 
         } else if (text[0] == "tick") {
             ptask_handler_->tick(text);
+        } else if (text[0] == "drop") {
+            // drop id
+            ptask_handler_->drop(text);
         } else {
             std::cout << "unk cmd: [" << cmd << "]" << std::endl;
         }
@@ -64,10 +68,11 @@ private:
         } else if (text.size() == 2 && util::is_date(text[1])) {
             // ls specific day
             ptask_handler_->print(text);
+        } else if (text.size() == 2 && text[1] == "arch") {
+            ptask_handler_->print_arch(text);
         } else {
             ptask_handler_->print_duration(text);
             // ls duration: ls week, ls month, todo
-
         }
     }
 };

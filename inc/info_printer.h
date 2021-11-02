@@ -11,21 +11,6 @@
 #include "tabulate/table.hpp"
 #include "tabulate/markdown_exporter.hpp"
 namespace tomato {
-class InfoPrinter {
-public:
-    InfoPrinter() {}
-
-protected:
-    tabulate::Table table_;
-    virtual void list_info() = 0;
-    friend std::ostream& operator<<(std::ostream& os, const InfoPrinter& tb);
-};
-
-std::ostream& operator<<(std::ostream& os, const InfoPrinter& tb) {
-    os << tb.table_;
-    return os;
-}
-
 class TaskMarkDown {
 private:
     TaskPtr ptask_;
@@ -82,34 +67,35 @@ private:
     }
 };
 
-class InfoTask : public InfoPrinter {
-private:
-    Calendar& calendar_;
-    DateW& date_;
-
+class InfoPrinter {
 public:
-    InfoTask(Calendar& calendar, DateW& dt) 
-        : calendar_(calendar), date_(dt) {
-            list_info();
-    }
+    InfoPrinter() {}
 
 protected:
-    void list_info() override {
-        tabulate::Table title;
-        std::stringstream ss;
-        ss << date_ << " " << date_.to_weekday();
-        title.add_row({ss.str()});
-        title.format()
-            .font_style({tabulate::FontStyle::underline})
-            .font_align(tabulate::FontAlign::center)
-            .font_background_color(tabulate::Color::grey)
-            .hide_border_top()
-            .hide_border_left()
-            .hide_border_bottom()
-            .hide_border_right();
-        std::cout << title << std::endl;
+    tabulate::Table table_;
+    virtual void list_info() = 0;
+    friend std::ostream& operator<<(std::ostream& os, const InfoPrinter& tb);
+};
 
-        std::vector<TaskPtr> ptasks = calendar_.get_tasks(date_);
+std::ostream& operator<<(std::ostream& os, const InfoPrinter& tb) {
+    os << tb.table_;
+    return os;
+}
+
+class TaskPrinter : public InfoPrinter {
+protected:
+    Calendar& calendar_;
+    // TODO: optimizable
+    std::vector<TaskPtr> ptasks_;
+
+public:
+    TaskPrinter(Calendar& calendar) 
+        : calendar_(calendar) {
+    }
+    
+    void list_info() override {
+
+        auto& ptasks = ptasks_;
         table_.add_row({TAG::id, TAG::title, TAG::status, TAG::epic, 
             TAG::start, TAG::end});
 
@@ -137,6 +123,41 @@ protected:
             }
         }
         std::cout << table_ << std::endl;
+    }
+};
+
+class InfoTask : public TaskPrinter{
+private:
+    DateW& date_;
+public:
+    InfoTask(Calendar& calendar, DateW& dt) 
+        : TaskPrinter(calendar), date_(dt) {
+        ptasks_ = calendar_.get_tasks(date_);
+        
+        tabulate::Table title;
+        std::stringstream ss;
+        ss << date_ << " " << date_.to_weekday();
+        title.add_row({ss.str()});
+        title.format()
+            .font_style({tabulate::FontStyle::underline})
+            .font_align(tabulate::FontAlign::center)
+            .font_background_color(tabulate::Color::grey)
+            .hide_border_top()
+            .hide_border_left()
+            .hide_border_bottom()
+            .hide_border_right();
+        std::cout << title << std::endl;
+        
+        list_info();
+    }
+};
+
+class InfoArch : public TaskPrinter {
+public:
+    InfoArch(Calendar& calendar) 
+        : TaskPrinter(calendar){
+        ptasks_ = calendar_.get_arch();
+        list_info();
     }
 };
 

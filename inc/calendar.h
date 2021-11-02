@@ -36,12 +36,14 @@ public:
     std::vector<TaskPtr>& get_tasks(int day) { 
         return pdays_[day]->tasks();
     }
+
+    std::vector<DayPtr>& days() { return pdays_;}
 };
 
 class Calendar {
 private:
     std::vector<Month> months_;
-
+    std::vector<TaskPtr> archive_;
 public:
     Calendar(){
         for(int i = 0; i < 13; ++i) {
@@ -52,10 +54,36 @@ public:
 
     void load_tasks(TaskBook& taskbook) {
         for(auto ptask : taskbook.tasks()) {
-            add_task(ptask);
+            if (ptask->status() == VALUE::arch) {
+                archive_.push_back(ptask);
+            } else {
+                add_task(ptask);
+            }
         }
     }
 
+    void drop_task(TaskPtr ptask) {
+        auto date = ptask->date(); 
+        auto& the_month = months_[date.wmonth()];
+        auto& the_day = the_month.days()[date.wday()];
+        auto& all_tasks = the_day->tasks();
+        size_t del_point = all_tasks.size(); 
+        for (size_t i = 0; i < all_tasks.size(); ++i) {
+            if (all_tasks[i] == ptask) {
+                del_point = i;
+                break;
+            }
+        }
+        if (del_point == all_tasks.size()) {
+            LOG(INFO) << "can't found the task " 
+                << ptask->id() << " in the date: " << ptask->date(); 
+            return;
+        }
+        archive_.push_back(ptask);
+        all_tasks.erase(all_tasks.begin()+del_point);
+    }
+
+    // TODO: directly do it here
     void add_task(TaskPtr ptask) {
         check_date(ptask->date());
         months_[ptask->date().wmonth()].add_task(ptask);
@@ -65,6 +93,8 @@ public:
         check_date(dt);
         return months_[dt.wmonth()].get_tasks(dt.wday());
     }
+
+    inline std::vector<TaskPtr>& get_arch() { return archive_;}
 
 private:
     inline void check_date(DateW& dt) {
