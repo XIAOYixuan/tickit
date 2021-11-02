@@ -38,6 +38,7 @@ public:
         
         auto id = std::to_string(ptask_->id());
         auto title = ptask_->title();
+        std::replace(title.begin(), title.end(), ' ', '_');
         path_ = path + "/" + id + "_" + title + ".md";
 
         create_md();
