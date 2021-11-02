@@ -42,10 +42,10 @@ public:
 
 class TaskHandler : public BaseCMDHandler {
     std::string head_, time_, epic_, text_;
-public:
-    TaskHandler(Calendar& c, TaskBook& t) : BaseCMDHandler(c, t) {}
 using cmdvec = std::vector<std::string>;
-    void drop(cmdvec& cmd) {
+private:
+    // cmd id
+    TaskPtr check_cmd_id(cmdvec& cmd) {
         if (cmd.size() != 2 || !util::is_number(cmd[1])) {
             LOG(INFO) << "invalid cmd : " << util::join(cmd);
         }
@@ -53,9 +53,22 @@ using cmdvec = std::vector<std::string>;
         if (ptask == nullptr) {
             LOG(INFO) << "unkwnon id : " << cmd[1];
         }
-
+        return ptask;
+    }
+public:
+    TaskHandler(Calendar& c, TaskBook& t) : BaseCMDHandler(c, t) {}
+    void drop(cmdvec& cmd) {
+        auto ptask = check_cmd_id(cmd);
+        if (ptask == nullptr) return;
         calendar_.drop_task(ptask);
         ptask->set_status(VALUE::arch);
+    }
+
+    void aktiv(cmdvec& cmd) {
+        auto ptask = check_cmd_id(cmd);
+        if (ptask == nullptr) return;
+        calendar_.aktiv_task(ptask);
+        ptask->set_status(VALUE::todo);
     }
 
     void edit(std::vector<std::string>& cmd) {

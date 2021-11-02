@@ -51,6 +51,8 @@ public:
         } else if (text[0] == "drop") {
             // drop id
             ptask_handler_->drop(text);
+        } else if (text[0] == "aktiv") {
+            ptask_handler_->aktiv(text);
         } else {
             std::cout << "unk cmd: [" << cmd << "]" << std::endl;
         }

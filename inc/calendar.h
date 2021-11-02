@@ -83,6 +83,24 @@ public:
         all_tasks.erase(all_tasks.begin()+del_point);
     }
 
+    void aktiv_task(TaskPtr ptask) {
+        size_t del_point = archive_.size();
+        for (size_t i = 0; i < archive_.size(); ++i) {
+            if (archive_[i] == ptask) {
+                del_point = i;
+                break;
+            }
+        }
+        
+        if (del_point == archive_.size()) {
+            LOG(INFO) << "can't found the task " 
+                << ptask->id() << " in the date: " << ptask->date(); 
+            return;
+        }
+        archive_.erase(archive_.begin()+del_point);
+        add_task(ptask);
+    }
+
     // TODO: directly do it here
     void add_task(TaskPtr ptask) {
         check_date(ptask->date());
