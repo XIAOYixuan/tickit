@@ -85,12 +85,14 @@ std::ostream& operator<<(std::ostream& os, const InfoPrinter& tb) {
 class TaskPrinter : public InfoPrinter {
 protected:
     Calendar& calendar_;
+    std::unordered_map<std::string, EpicPtr>& epic_map_;
     // TODO: optimizable
     std::vector<TaskPtr> ptasks_;
 
 public:
-    TaskPrinter(Calendar& calendar) 
-        : calendar_(calendar) {
+    TaskPrinter(Calendar& calendar, 
+        std::unordered_map<std::string, EpicPtr>& epic_map) 
+        : calendar_(calendar), epic_map_(epic_map) {
     }
     
     void list_info() override {
@@ -112,16 +114,18 @@ public:
         table_[0].format().font_style({tabulate::FontStyle::bold}).font_align(tabulate::FontAlign::center);
         for (size_t i = 0; i < ptasks.size(); ++i) {
             auto& ptask = ptasks[i];
+            auto epic_id = epic_map_.at(ptask->epic())->id();
             table_.add_row(
                 {std::to_string(ptask->id()), 
                     ptask->title(),
                     ptask->status(),  
-                    ptask->epic(), 
+                    std::to_string(epic_id) + ":" + ptask->epic(), 
                     ptask->start(), ptask->end()});
             if (ptask->status()  == "done") {
                 table_[i+1].format().font_color(tabulate::Color::green);
             }
         }
+        // table_.column(3).format().width(15);
         std::cout << table_ << std::endl;
     }
 };
@@ -130,8 +134,10 @@ class InfoTask : public TaskPrinter{
 private:
     DateW& date_;
 public:
-    InfoTask(Calendar& calendar, DateW& dt) 
-        : TaskPrinter(calendar), date_(dt) {
+    InfoTask(Calendar& calendar, 
+        std::unordered_map<std::string, EpicPtr>& epic_map,
+        DateW& dt) 
+            : TaskPrinter(calendar, epic_map), date_(dt) {
         ptasks_ = calendar_.get_tasks(date_);
         
         tabulate::Table title;
@@ -154,8 +160,9 @@ public:
 
 class InfoArch : public TaskPrinter {
 public:
-    InfoArch(Calendar& calendar) 
-        : TaskPrinter(calendar){
+    InfoArch(Calendar& calendar,
+        std::unordered_map<std::string, EpicPtr>& epic_map)
+            : TaskPrinter(calendar, epic_map) {
         ptasks_ = calendar_.get_arch();
         list_info();
     }

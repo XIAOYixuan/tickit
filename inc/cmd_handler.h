@@ -119,18 +119,18 @@ public:
     void print(std::vector<std::string>& cmd) override {
         if (cmd.size() == 1) {
             // ls
-            InfoTask info(calendar_, DateW::today());
+            InfoTask info(calendar_, taskbook_.epics(), DateW::today());
         } else if (cmd.size() == 2) {
             // ls date
             auto date = DateW::to_date(cmd[1]);
-            InfoTask info(calendar_, date);
+            InfoTask info(calendar_, taskbook_.epics(), date);
         } else {
             LOG(INFO) << "error cmd";
         }
     }
 
     void print_arch(cmdvec& cmd) {
-        InfoArch p(calendar_);
+        InfoArch p(calendar_, taskbook_.epics());
     }
 
     void print_duration(std::vector<std::string>& cmd) {
@@ -167,7 +167,7 @@ public:
         auto ptask = taskbook_.get_task_by_id(cmd[1]);
         CHECK(ptask->status() == VALUE::todo);
         ptask->set_status(VALUE::done);
-        InfoTask info(calendar_, DateW::today());
+        InfoTask info(calendar_, taskbook_.epics(), DateW::today());
     }
 
 private:
