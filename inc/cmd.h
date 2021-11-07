@@ -59,6 +59,9 @@ public:
         } else if (text[0] == "time") {
             // time id start time
             ptask_handler_->set_time(text);
+        } else if (text[0] == "stat") {
+            // analyze info
+            stat_info(text);
         } else {
             std::cout << "unk cmd: [" << cmd << "]" << std::endl;
         }
@@ -66,6 +69,13 @@ public:
     }
 
 private:
+    void stat_info(std::vector<std::string>& cmd) {
+        if (cmd.size() == 1) {
+            // stat week
+            ptask_handler_->stat_week(cmd);
+        }
+    }
+
     void list_info(std::vector<std::string>& text) {
         if (text.size() == 1) {
             // ls task
@@ -78,8 +88,8 @@ private:
             ptask_handler_->print(text);
         } else if (text.size() == 2 && text[1] == "arch") {
             ptask_handler_->print_arch(text);
-        } else {
-            ptask_handler_->print_duration(text);
+        } else if (text[1] == "week") {
+            ptask_handler_->print_this_week(text);
             // ls duration: ls week, ls month, todo
         }
     }

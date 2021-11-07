@@ -86,6 +86,7 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, const DateW& dt);
     friend DateW operator+(const DateW& lhs, uint days);
+    friend DateW operator-(const DateW& lhs, uint days);
 
 private:
     uint m_int(month target) {
@@ -122,10 +123,34 @@ private:
             if (month_ == 13) {
                 month_ = 1;
                 year_ ++;
+                CHECK(false) << "we reach a different year, not impl";
             }
             return ;
         }
         return ;
+    }
+
+    void minus_one_day() {
+        day_ --;
+        
+        if (0 < day_ && day_ < 28) {
+            return ;
+        }
+        
+        if (month_ == 2 && day_ == 29) {
+            if (year_ % 400 == 0) return ;
+            if (year_ % 4 == 0 && year_ % 100 != 0) return ;
+        } 
+
+        if (day_ < 1) {
+            month_ --;
+            if (month_ < 1) {
+                month_ = 12;
+                year_ --;
+                CHECK(false) << "we reach a different year, not impl";
+            }
+            day_ = DateW::days_in_month_[month_];
+        }
     }
 
     static std::vector<int> days_in_month_;
@@ -162,6 +187,14 @@ DateW operator+(const DateW& lhs, uint days) {
     auto ret = lhs;
     for (uint i = 0; i < days; ++i) {
         ret.add_one_day();
+    }
+    return ret; 
+}
+
+DateW operator-(const DateW& lhs, uint days) {
+    auto ret = lhs;
+    for (uint i = 0; i < days; ++i) {
+        ret.minus_one_day();
     }
     return ret; 
 }

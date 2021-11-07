@@ -11,6 +11,7 @@
 #include "tabulate/table.hpp"
 #include "tabulate/markdown_exporter.hpp"
 namespace tomato {
+using Row_t = std::vector<variant<std::string, const char *, tabulate::Table>>;
 class TaskMarkDown {
 private:
     TaskPtr ptask_;
@@ -94,6 +95,11 @@ public:
         std::unordered_map<std::string, EpicPtr>& epic_map) 
         : calendar_(calendar), epic_map_(epic_map) {
     }
+
+    inline std::string id_epic(std::string epic) {
+        auto epic_id = epic_map_.at(epic)->id();
+        return std::to_string(epic_id) + ":" + epic;
+    }
     
     void list_info() override {
 
@@ -118,12 +124,11 @@ public:
         table_[0].format().font_style({tabulate::FontStyle::bold}).font_align(tabulate::FontAlign::center);
         for (size_t i = 0; i < ptasks.size(); ++i) {
             auto& ptask = ptasks[i];
-            auto epic_id = epic_map_.at(ptask->epic())->id();
             table_.add_row(
                 {std::to_string(ptask->id()), 
                     ptask->title(),
-                    ptask->status(),  
-                    std::to_string(epic_id) + ":" + ptask->epic(), 
+                    ptask->status(), 
+                    id_epic(ptask->epic()),
                     ptask->start(), ptask->end()});
             if (ptask->status()  == "done") {
                 table_[i+1].format().font_color(tabulate::Color::green);
@@ -172,6 +177,90 @@ public:
     }
 };
 
+// TODO: maybe another stat printer
+class StatTask : public TaskPrinter {
+private:
+    std::vector<DateW>& days_;
+    std::unordered_map<int, std::vector<TaskPtr>> epic_tasks_;
+    std::vector<std::pair<int, std::string>> epics_;
+
+public:
+    StatTask(Calendar& calendar,
+        std::unordered_map<std::string, EpicPtr>& epic_map, 
+        std::vector<DateW>& days)
+            : TaskPrinter(calendar, epic_map), days_(days) {
+        get_all_tasks();
+        group_by_epics();
+        list_info();
+    }
+
+private:
+    void get_all_tasks() {
+        for (auto& oneday : days_) {
+            auto& ptasks = calendar_.get_tasks(oneday);
+            ptasks_.insert(ptasks_.end(), ptasks.begin(), ptasks.end());
+        }
+    }
+
+    void group_by_epics() {
+        for (auto& ptask : ptasks_) {
+            auto epic = ptask->epic();
+            auto epic_id = epic_map_.at(epic)->id();
+            if (epic_tasks_.count(epic_id) == 0) {
+                epic_tasks_[epic_id] = std::vector<TaskPtr>{ptask};
+                epics_.push_back(std::make_pair(epic_id, epic));
+            } else {
+                epic_tasks_.at(epic_id).push_back(ptask);
+            }
+        }
+        std::sort(epics_.begin(), epics_.end());
+    } 
+    
+    void list_info() override {
+        for (size_t i = 0; i < epics_.size(); ++i) {
+            list_one_epic(id_epic(epics_[i].second), 
+                epic_tasks_[epics_[i].first]);
+        }
+    }
+
+    void list_one_epic(std::string epic, std::vector<TaskPtr>& ptasks) {
+        tabulate::Table header;
+        header.add_row(Row_t{epic});
+        header[0].format()
+            .hide_border()
+            .font_align(tabulate::FontAlign::center)
+            .font_color(tabulate::Color::blue)
+            .width(112);
+
+        tabulate::Table table;
+        // table.add_row({epic});
+        // table.add_row({TAG::id, TAG::title, TAG::status, TAG::start, TAG::end});
+        table.add_row({TAG::id, TAG::title, TAG::status, TAG::start, TAG::end});
+        std::sort(ptasks.begin(), ptasks.end(), [](auto& lhs, auto& rhs){
+            return lhs->id() < rhs->id(); 
+        });
+        for(size_t i = 0; i < ptasks.size(); ++i) {
+            auto& ptask = ptasks[i];
+            table.add_row({std::to_string(ptask->id()), 
+                ptask->title(), 
+                ptask->status(), 
+                ptask->start(), ptask->end()}
+            );
+            if (ptask->status() == VALUE::done) {
+                table[i+1].format().font_color(tabulate::Color::green);
+            }
+        }
+        table[0].format().background_color(tabulate::Color::grey);
+        table.column(0).format().width(4);
+        table.column(1).format().width(64);
+        table.column(2).format().width(8);
+        table.column(3).format().width(8);
+        table.column(4).format().width(8);
+        // header.add_row(Row_t{table});
+        std::cout << header << std::endl;
+        std::cout << table << std::endl;
+    }
+};
 class InfoEpic : public InfoPrinter {
 private:
     TaskBook tb_;

@@ -96,7 +96,7 @@ public:
         auto id = std::stoi(cmd[1]);
         auto ptask = taskbook_.get_task_by_id(id);
         TaskMarkDown md(ptask);
-        auto vimcmd = "vim " + md.path();
+        auto vimcmd = "nvim " + md.path();
         system(vimcmd.c_str());
     }
 
@@ -153,17 +153,52 @@ public:
     void print_arch(cmdvec& cmd) {
         InfoArch p(calendar_, taskbook_.epics());
     }
-
-    void print_duration(std::vector<std::string>& cmd) {
-        // ls week
+    
+    DateW locate_monday() {
         auto cur_date = DateW::today();
-        for (int i = 0; i < 7; i++) {
+        // locate monday
+        for (int i = 0; i < 7; ++i)  {
+            cur_date = cur_date - 1;
+            if (cur_date.wday() == 1) {
+                return cur_date;
+            }
+        }
+        CHECK(false) << "monday 404";
+        return cur_date;
+    }
+
+    std::vector<DateW> gather_days(DateW& start, int days) {
+        std::vector<DateW> ret;
+        for (int i = 0; i < days; ++i) {
+            start = start + 1;
+            ret.push_back(start);
+        }
+        return ret;
+    }
+
+    void stat_week(cmdvec& cmd) {
+        auto cur_date = locate_monday();
+        auto days = gather_days(cur_date, 7);
+        StatTask(calendar_, taskbook_.epics(), days) ;
+        // group_by_epic();
+        // print_result();
+    }
+
+
+    void print_this_week(cmdvec& cmd) {
+        auto cur_date = locate_monday();
+        print_duration(cur_date, 7, cmd);
+    }
+
+    void print_duration(DateW& cur_date, int days, cmdvec& cmd) {
+        auto alldays = gather_days(cur_date, days);
+        // ls this week
+        for (int i = 0; i < days; i++) {
             if (i) {
                 std::cout << std::endl;
             }
-            cmd[1] = cur_date.to_month_day();
+            cmd[1] = alldays[i].to_month_day();
             print(cmd);
-            cur_date = cur_date + 1;
         }
     }
 
