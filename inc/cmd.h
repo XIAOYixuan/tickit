@@ -64,7 +64,6 @@ public:
             stat_info(text);
         } else if (text[0] == "repe") {
             // show the epics whose latest day is 2 days algo.1
-            
             pepic_handler_->repe(text);
         } else {
             std::cout << "unk cmd: [" << cmd << "]" << std::endl;
@@ -74,11 +73,8 @@ public:
 
 private:
     void stat_info(std::vector<std::string>& cmd) {
-        if (cmd.size() == 1) {
-            // stat week
-            ptask_handler_->stat_week(cmd);
-        }
-    }
+        ptask_handler_->stat_week(cmd);
+    }    
 
     void list_info(std::vector<std::string>& text) {
         if (text.size() == 1) {

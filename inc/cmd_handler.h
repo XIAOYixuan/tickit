@@ -165,8 +165,7 @@ public:
         InfoArch p(calendar_, taskbook_.epics());
     }
     
-    DateW locate_monday() {
-        auto cur_date = DateW::today();
+    DateW locate_monday(DateW cur_date) {
         // locate monday
         for (int i = 0; i < 7; ++i)  {
             cur_date = cur_date - 1;
@@ -179,17 +178,23 @@ public:
         return cur_date;
     }
 
-    std::vector<DateW> gather_days(DateW& start, int days) {
+    std::vector<DateW> gather_days(DateW start, int days) {
         std::vector<DateW> ret;
         for (int i = 0; i < days; ++i) {
-            start = start + 1;
             ret.push_back(start);
+            start = start + 1;
         }
         return ret;
     }
 
     void stat_week(cmdvec& cmd) {
-        auto cur_date = locate_monday();
+        DateW cur_date;
+        if (cmd.size() == 1) {
+            cur_date = DateW::today();
+        } else {
+            cur_date = DateW::to_date(cmd[1]);
+        }
+        cur_date = locate_monday(cur_date);
         auto days = gather_days(cur_date, 7);
         StatTask(calendar_, taskbook_.epics(), days) ;
         // group_by_epic();
@@ -198,7 +203,7 @@ public:
 
 
     void print_this_week(cmdvec& cmd) {
-        auto cur_date = locate_monday();
+        auto cur_date = locate_monday(DateW::today());
         print_duration(cur_date, 7, cmd);
     }
 
