@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <chrono>
 #include "inc/util.h"
 #include "inc/taskbook.h"
 #include "inc/calendar.h"
@@ -72,6 +73,14 @@ public:
     void set_time(cmdvec& cmd) {
         auto ptask = check_cmd_id(cmd);
         ptask->set_start(cmd[2]);
+    }
+
+    void pomodora(cmdvec& cmd) {
+        // timer and reminder
+        auto ptask = check_cmd_id(cmd);
+        auto st_time = util::get_cur_time();
+        auto ed_time = util::get_cur_time();
+        ptask->add_timestamp(st_time, ed_time);
     }
 
     void move(cmdvec& cmd) {

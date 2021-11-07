@@ -20,14 +20,31 @@ protected:
     std::string attach_;
     DateW date_;
     int start_int_, end_int_;
+    std::vector<std::pair<DateTime, DateTime>> pomos_;
+
 public:
     Task() = default;
+
+    void process_pomo(xml::Node pomo_node) {
+        auto timestamps = pomo_node.all_kids();
+        for(size_t i = 0; i < pomo_node.size(); ++i) {
+            auto ts = xml::Node(pomo_node.get_item(i));
+            auto st_time = ts.get_kid(TAG::start).value();
+            auto ed_time = ts.get_kid(TAG::end).value();
+            pomos_.push_back(std::make_pair(DateTime(st_time), DateTime(ed_time)));
+        }
+    }
 
     void init_by_node(xml::Node& task_node) {
         for(size_t i = 0; i < task_node.size(); ++i) {
             auto tag = task_node.get_item(i);
             auto label = tag.label();
             auto text = tag.value();
+            if (label == TAG::pomo) {
+                process_pomo(xml::Node(tag));
+                continue;
+            }
+
             if (text == "none") continue;
 
             if (label == TAG::id) {
@@ -52,7 +69,7 @@ public:
                 attach_ = text;
             } else if (label == TAG::date) {
                 date_ = DateW(text);
-            } else  {
+            } else {
                 CHECK(false) << "unseen attr [" << label << " " << text << "]";
             }
         }
@@ -116,6 +133,19 @@ public:
     inline std::string& status() { return status_; }
     inline int& start_int() { return start_int_; }
     inline int& end_int() { return end_int_; }
+    inline void add_timestamp(std::string st_time, std::string ed_time) {
+        pomos_.push_back(std::make_pair(DateTime(st_time), DateTime(ed_time)));
+        std::shared_ptr<xml::Node> proot = proot_;
+        if (pdoc_) proot.reset(new xml::Node(pdoc_->get_root().ptr()));;
+
+        auto pomo_node = proot->get_kid(TAG::pomo);
+        xml::Node st(TAG::start, st_time);
+        xml::Node ed(TAG::end, ed_time);
+        xml::Node timestamp(TAG::timestamp);
+        timestamp.add_kid(st);
+        timestamp.add_kid(ed);
+        pomo_node.add_kid(timestamp);
+    }
 
 private: 
     void set_text(std::string label, std::string text) {

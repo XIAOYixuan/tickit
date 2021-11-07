@@ -1,6 +1,9 @@
 #ifndef TOMATO_UTIL_H
 #define TOMATO_UTIL_H
+#include<ctime>
 #include <string>
+#include <iomanip>
+#include <chrono>
 #include <sstream>
 #include <vector>
 #include <cctype>
@@ -76,6 +79,23 @@ int time_to_int(std::string t) {
     int h = std::stoi(hm[0]);
     int m = std::stoi(hm[1]);
     return (h+add)*60 + m;
+}
+
+// xx:xx:xx --> second
+int time_to_sec(std::string time) {
+        auto text = util::split(time, ':');
+        return std::stoi(text[0])*3600 + std::stoi(text[1])*60 + std::stoi(text[2]);
+}
+
+std::string get_cur_time() {
+    // TODO: a new class?
+    auto start = std::chrono::system_clock::now();
+    std::time_t time_it = std::chrono::system_clock::to_time_t(start);
+    std::stringstream ss;
+    ss << std::put_time(std::localtime(&time_it), "%Y %m %d %X") << std::endl;
+    auto ret = ss.str();
+    ret.pop_back();
+    return ret; 
 }
 
  void extract_leading_time_one(std::string& s, std::string& ltime) {

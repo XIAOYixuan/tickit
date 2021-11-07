@@ -14,8 +14,21 @@ class Node {
 private:
     naive_xml::NodePtr pnode_;
 public:
+    Node() = default;
     Node(naive_xml::NodePtr node) {
         pnode_ = node;
+    }
+
+    Node(std::string label, std::string value) {
+        pnode_.reset(new naive_xml::Node("<" + label + ">", value));
+    }
+    
+    Node(std::string label) {
+        pnode_.reset(new naive_xml::Node("<" + label + ">"));
+    }
+
+    void add_kid(Node& kid) {
+        pnode_->kids.push_back(kid.ptr());
     }
 
     naive_xml::NodePtr ptr() {
@@ -61,7 +74,16 @@ public:
             }
         }
         CHECK(false) << "tag [" << tag << "] not found";
-        return Node(nullptr);
+        return Node();
+    }
+
+    // TODO: maybe we should rm xml
+    std::vector<Node> all_kids() {
+        std::vector<Node> ret;
+        for (auto kid : pnode_->kids) {
+            ret.push_back(Node(kid));
+        }
+        return ret;
     }
 
     std::string get_kid_value(std::string tag) {

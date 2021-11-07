@@ -65,6 +65,8 @@ public:
         } else if (text[0] == "repe") {
             // show the epics whose latest day is 2 days algo.1
             pepic_handler_->repe(text);
+        } else if (text[0] == "pomo") {
+            ptask_handler_->pomodora(text);
         } else {
             std::cout << "unk cmd: [" << cmd << "]" << std::endl;
         }

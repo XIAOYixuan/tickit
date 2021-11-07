@@ -222,5 +222,22 @@ bool operator<(const DateW& lhs, const DateW& rhs) {
     return lhs.day_ < rhs.day_;
 }
 
+// date and current time
+class DateTime {
+private:
+    DateW date_;
+    int sec_; // current time in second
+public:
+    // 2021 11 7 22:40:38
+    DateTime(std::string systime) {
+        auto text = util::split(systime);
+        sec_ = util::time_to_sec(text.back());
+        text.pop_back();
+        date_ = DateW(util::join(text));
+    }
+
+private:
+};
+
 } // namespace tomato 
 #endif // TOMATO_DATE_WRAPPER_H
