@@ -66,6 +66,15 @@ public:
         auto raw = pnode_->kids[pt];
         return Node(raw);
     }
+
+    bool has_kid(std::string tag) {
+        for (auto kid : pnode_->kids) {
+            if (kid->label() == tag) {
+                return true; 
+            }
+        }
+        return false;
+    }
     
     Node get_kid(std::string tag) {
         for (auto kid : pnode_->kids) {

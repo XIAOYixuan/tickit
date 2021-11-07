@@ -138,6 +138,10 @@ public:
         std::shared_ptr<xml::Node> proot = proot_;
         if (pdoc_) proot.reset(new xml::Node(pdoc_->get_root().ptr()));;
 
+        if (!proot->has_kid(TAG::pomo)) {
+            xml::Node pomo(TAG::pomo);
+            proot->add_kid(pomo);
+        }
         auto pomo_node = proot->get_kid(TAG::pomo);
         xml::Node st(TAG::start, st_time);
         xml::Node ed(TAG::end, ed_time);

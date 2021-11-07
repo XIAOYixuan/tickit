@@ -79,6 +79,8 @@ public:
         // timer and reminder
         auto ptask = check_cmd_id(cmd);
         auto st_time = util::get_cur_time();
+        auto pclock = "python " + TEMPLATE::clock_prog;
+        system(pclock.c_str());
         auto ed_time = util::get_cur_time();
         ptask->add_timestamp(st_time, ed_time);
     }
