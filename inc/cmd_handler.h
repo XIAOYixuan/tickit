@@ -170,7 +170,8 @@ public:
         // locate monday
         for (int i = 0; i < 7; ++i)  {
             cur_date = cur_date - 1;
-            if (cur_date.wday() == 1) {
+            // TODO: don't use string here
+            if (cur_date.to_weekday() == "Mon") {
                 return cur_date;
             }
         }
