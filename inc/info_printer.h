@@ -110,6 +110,11 @@ public:
         std::sort(std::begin(ptasks), std::end(ptasks), [] (auto& lhs, auto& rhs) {
             if (lhs->status() != "done" && rhs->status() == "done") {
                 return true;
+            } else if (lhs->status() != "done" && rhs->status() != "done" 
+                && lhs->start_int() == std::numeric_limits<int>::max()
+                && rhs->start_int() == std::numeric_limits<int>::max()) {
+                return lhs->id() > rhs->id();
+
             } else if (lhs->status() != "done" && rhs->status() != "done") {
                 if (lhs->start_int() != rhs->start_int()) {
                     return lhs->start_int() < rhs->start_int();
