@@ -192,9 +192,25 @@ public:
         get_all_tasks();
         group_by_epics();
         list_info();
+        output_to_python();
     }
 
 private:
+    void output_to_python() {
+        // TODO: directly call python
+        std::ofstream fpypath("stat/epic.tmp");
+        for (auto& epic : epics_) {
+            fpypath << epic.first << " "  << epic.second << " ";
+            auto& ptasks = epic_tasks_.at(epic.first);
+            fpypath << ptasks.size() << std::endl;
+            for (auto& task : ptasks) {
+                fpypath << task->title() << std::endl;
+            }
+        }
+        fpypath.close();
+        system("python stat/plot.py stat/epic.tmp");
+    }
+
     void get_all_tasks() {
         for (auto& oneday : days_) {
             auto& ptasks = calendar_.get_tasks(oneday);
@@ -230,21 +246,22 @@ private:
             .hide_border()
             .font_align(tabulate::FontAlign::center)
             .font_color(tabulate::Color::blue)
-            .width(112);
+            .width(102);
 
         tabulate::Table table;
         // table.add_row({epic});
         // table.add_row({TAG::id, TAG::title, TAG::status, TAG::start, TAG::end});
-        table.add_row({TAG::id, TAG::title, TAG::status, TAG::start, TAG::end});
+        table.add_row({TAG::id, TAG::date, TAG::title, TAG::status});
         std::sort(ptasks.begin(), ptasks.end(), [](auto& lhs, auto& rhs){
-            return lhs->id() < rhs->id(); 
+            // return lhs->id() < rhs->id(); 
+            return lhs->date().int_for_cmp() < rhs->date().int_for_cmp();
         });
         for(size_t i = 0; i < ptasks.size(); ++i) {
             auto& ptask = ptasks[i];
             table.add_row({std::to_string(ptask->id()), 
+                ptask->date().to_month_day(), 
                 ptask->title(), 
-                ptask->status(), 
-                ptask->start(), ptask->end()}
+                ptask->status()}
             );
             if (ptask->status() == VALUE::done) {
                 table[i+1].format().font_color(tabulate::Color::green);
@@ -252,10 +269,9 @@ private:
         }
         table[0].format().background_color(tabulate::Color::grey);
         table.column(0).format().width(4);
-        table.column(1).format().width(64);
-        table.column(2).format().width(8);
+        table.column(1).format().width(10);
+        table.column(2).format().width(80);
         table.column(3).format().width(8);
-        table.column(4).format().width(8);
         // header.add_row(Row_t{table});
         std::cout << header << std::endl;
         std::cout << table << std::endl;

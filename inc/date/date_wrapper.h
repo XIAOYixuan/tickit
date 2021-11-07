@@ -56,6 +56,7 @@ public:
     inline int& wyear() {return year_;}
     inline uint& wmonth() {return month_;}
     inline uint& wday() {return day_;}
+    inline int int_for_cmp() { return day_ + month_ * 31 + year_ * 12 * 31; }
 
     void print() {
         std::cout << year_ << " " << month_ << " " << day_ << std::endl;
