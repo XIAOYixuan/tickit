@@ -203,7 +203,14 @@ public:
 
 
     void print_this_week(cmdvec& cmd) {
-        auto cur_date = locate_monday(DateW::today());
+        auto cur_date = DateW::today();
+        if (cmd.size() == 3) {
+            CHECK(cmd[2] == "nx");
+            cur_date = cur_date + 7;
+            // next week
+        }
+        cur_date = locate_monday(cur_date);
+        cmd.pop_back();
         print_duration(cur_date, 7, cmd);
     }
 
