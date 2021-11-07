@@ -56,7 +56,15 @@ public:
     inline int& wyear() {return year_;}
     inline uint& wmonth() {return month_;}
     inline uint& wday() {return day_;}
-    inline int int_for_cmp() { return day_ + month_ * 31 + year_ * 12 * 31; }
+    // reprent the date in days, for rough cmp
+    // TODO: check date.h, maybe there exists a similar method
+    inline int int_for_cmp() const { 
+        int ret = year_ * 365; 
+        for (int i = 1; i+1 < month_; ++i) {
+            ret += DateW::days_in_month_[i];
+        }
+        return ret + day_;
+    }
 
     void print() {
         std::cout << year_ << " " << month_ << " " << day_ << std::endl;
@@ -88,6 +96,8 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const DateW& dt);
     friend DateW operator+(const DateW& lhs, uint days);
     friend DateW operator-(const DateW& lhs, uint days);
+    friend int operator-(const DateW& lhs, const DateW& rhs);
+    friend bool operator<(const DateW& lhs, const DateW& rhs);
 
 private:
     uint m_int(month target) {
@@ -200,6 +210,17 @@ DateW operator-(const DateW& lhs, uint days) {
     return ret; 
 }
 
+int operator-(const DateW& lhs, const DateW& rhs) {
+    return lhs.int_for_cmp() - rhs.int_for_cmp();
+}
+
+bool operator<(const DateW& lhs, const DateW& rhs) {
+    if (lhs.year_ < rhs.year_) return true;
+    if (lhs.year_ > rhs.year_) return false;
+    if (lhs.month_ < rhs.month_) return true;
+    if (lhs.month_ > rhs.month_) return false;
+    return lhs.day_ < rhs.day_;
+}
 
 } // namespace tomato 
 #endif // TOMATO_DATE_WRAPPER_H

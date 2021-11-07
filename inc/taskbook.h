@@ -14,6 +14,7 @@ class TaskBook {
     xml::Doc doc_;
     std::vector<TaskPtr> tasks_;
     std::unordered_map<int, TaskPtr> id_tasks_;
+    // maybe use epic id?
     std::unordered_map<std::string, EpicPtr> epics_;
 public:
     TaskBook() {

@@ -62,6 +62,10 @@ public:
         } else if (text[0] == "stat") {
             // analyze info
             stat_info(text);
+        } else if (text[0] == "repe") {
+            // show the epics whose latest day is 2 days algo.1
+            
+            pepic_handler_->repe(text);
         } else {
             std::cout << "unk cmd: [" << cmd << "]" << std::endl;
         }

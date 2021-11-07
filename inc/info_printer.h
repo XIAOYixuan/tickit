@@ -277,6 +277,7 @@ private:
         std::cout << table << std::endl;
     }
 };
+
 class InfoEpic : public InfoPrinter {
 private:
     TaskBook tb_;
@@ -306,6 +307,47 @@ protected:
     }
 };
 
+// TODO: what a mess here
+class InfoRepe : public InfoPrinter {
+private:
+    TaskBook& taskbook_;
+    int gap_;
+public:
+    InfoRepe(TaskBook& tb, int gp) 
+        : taskbook_(tb), gap_(gp) {
+        list_info();
+    }
+
+protected:
+    void list_info() override {
+        std::unordered_map<std::string, DateW> latest_tasks;
+        for (auto& ptask : taskbook_.tasks()) {
+            if (ptask->status() != VALUE::done) continue;
+            auto cur_epic = ptask->epic();
+            if (latest_tasks.count(cur_epic) == 0) {
+                latest_tasks[cur_epic] = ptask->date();
+            } else if (latest_tasks.at(cur_epic) < ptask->date()) {
+                latest_tasks[cur_epic] = ptask->date();
+            }
+        }
+        table_.add_row({TAG::id, TAG::epic, TAG::date, "gap"});
+        auto today = DateW::today();
+        for (auto& it : latest_tasks) {
+            int gap = today - it.second;
+            if (gap <= gap_) continue;
+            int epic_id = taskbook_.epics().at(it.first)->id();
+            table_.add_row({
+                std::to_string(epic_id), 
+                it.first, 
+                it.second.to_month_day(), 
+                std::to_string(gap)
+                });
+        }
+        table_[0].format().font_style({tabulate::FontStyle::bold});
+        std::cout << table_ << std::endl;
+
+    }
+};
 } // namespace tomato
 
 #endif // TOMATO_INFO_PRINTER_H

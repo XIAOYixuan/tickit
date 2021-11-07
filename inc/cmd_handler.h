@@ -24,6 +24,7 @@ public:
 };
 
 class EpicHandler : public BaseCMDHandler {
+using cmdvec = std::vector<std::string>;
 public:
     EpicHandler(Calendar& c, TaskBook& t) : BaseCMDHandler(c, t) {}
     void create(std::vector<std::string>& cmd) override {
@@ -36,6 +37,16 @@ public:
 
     void print(std::vector<std::string>& cmd) override {
         InfoEpic info(taskbook_);
+    }
+
+    // for spaced repetition
+    // TODO: better methods, less operation, e.g. store the latest update
+    void repe(cmdvec& cmd) {
+        if (cmd.size() == 1) {
+            cmd.push_back("2");
+        }
+        CHECK(util::is_number(cmd[1])) << "repe days";
+        InfoRepe(taskbook_, std::stoi(cmd[1]));
     }
 
 };
