@@ -68,7 +68,7 @@ public:
         archive_.push_back(ptask);
     }
 
-    void aktiv_task(TaskPtr ptask) {
+    void aktiv_task(TaskPtr ptask, DateW new_date = DateW::today()) {
         size_t del_point = archive_.size();
         for (size_t i = 0; i < archive_.size(); ++i) {
             if (archive_[i] == ptask) {
@@ -83,6 +83,7 @@ public:
             return;
         }
         archive_.erase(archive_.begin()+del_point);
+        ptask->set_date(new_date);
         add_task(ptask);
     }
 
