@@ -67,6 +67,8 @@ public:
             pepic_handler_->repe(text);
         } else if (text[0] == "pomo") {
             ptask_handler_->pomodora(text);
+        } else if (text[0] == "rm"){
+            ptask_handler_->rm(text);
         } else {
             std::cout << "unk cmd: [" << cmd << "]" << std::endl;
         }

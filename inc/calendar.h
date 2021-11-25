@@ -56,7 +56,8 @@ public:
         for(auto ptask : taskbook.tasks()) {
             if (ptask->status() == VALUE::arch) {
                 archive_.push_back(ptask);
-            } else {
+            } else if (ptask->status() == VALUE::todo
+                || ptask->status() == VALUE::done) {
                 add_task(ptask);
             }
         }
@@ -104,7 +105,6 @@ public:
 
     inline std::vector<TaskPtr>& get_arch() { return archive_;}
 
-private:
     void delete_task(TaskPtr ptask) {
         auto date = ptask->date(); 
         auto& the_month = months_[date.wmonth()];
@@ -124,6 +124,8 @@ private:
         }
         all_tasks.erase(all_tasks.begin()+del_point);
     }
+
+private:
 
     inline void check_date(DateW& dt) {
         // TODO: extent to more years? only allow one year now

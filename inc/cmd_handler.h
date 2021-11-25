@@ -100,6 +100,19 @@ public:
         }
     }
 
+    void rm(cmdvec& cmd) {
+        for (size_t i = 1; i < cmd.size(); ++i) {
+            cmd[1] = cmd[i];
+            auto ptask = check_cmd_id(cmd);
+            if (ptask->status() == VALUE::arch) {
+                calendar_.aktiv_task(ptask);
+                ptask->set_status(VALUE::todo);
+            }
+            calendar_.delete_task(ptask);
+            ptask->set_status(VALUE::dele);
+        }
+    }
+
     void drop(cmdvec& cmd) {
         auto ptask = check_cmd_id(cmd);
         if (ptask == nullptr) return;
