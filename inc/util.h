@@ -21,6 +21,13 @@ public:
 };
 
 namespace util {
+
+std::string to_lower(std::string data) {
+    std::transform(data.begin(), data.end(), data.begin(),
+    [](unsigned char c){ return std::tolower(c); });
+    return data;
+}
+
 std::vector<std::string> split(const std::string& text, char delim=' ') {
     std::vector<std::string> ret;
     std::stringstream ss(text);

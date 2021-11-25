@@ -50,6 +50,10 @@ public:
         InfoRepe(taskbook_, std::stoi(cmd[1]));
     }
 
+    void drop(cmdvec& cmd) {
+        CHECK(util::is_number(cmd[1])) << "epic id";
+        taskbook_.archiv_epic(std::stoi(cmd[1]));
+    }
 };
 
 class TaskHandler : public BaseCMDHandler {

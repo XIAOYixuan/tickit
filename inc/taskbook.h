@@ -16,6 +16,7 @@ class TaskBook {
     std::unordered_map<int, TaskPtr> id_tasks_;
     // maybe use epic id?
     std::unordered_map<std::string, EpicPtr> epics_;
+    std::unordered_map<std::string, EpicPtr> arch_epics_;
 public:
     TaskBook() {
         doc_.load_path(TEMPLATE::taskbook);
@@ -83,10 +84,22 @@ public:
         epics_[pepic->title()] = pepic;
     }
 
+    void archiv_epic(int id) {
+        auto title = get_epic_by_id(id);
+        auto pepic = epics_.at(title);
+        CHECK(epics_.count(pepic->title()) != 0);
+        pepic->set_status(VALUE::arch);
+        epics_.erase(pepic->title());
+        arch_epics_[pepic->title()] = pepic;
+    }
+
     inline bool epic_exist(std::string title) {
         return epics_.count(title) != 0;
     }
 
+    inline bool is_arch(std::string title) {
+        return arch_epics_.count(title) != 0;
+    }
     inline std::vector<TaskPtr>& tasks() { return tasks_; }
     inline std::unordered_map<std::string, EpicPtr>& epics() { return epics_;}
 
@@ -106,10 +119,13 @@ private:
         for(size_t i = 0; i < epic_nodes.size(); ++i) {
             auto epic_node = epic_nodes.get_item(i);
             auto epic_name = epic_node.get_kid_value("title");
-            if (!epic_exist(epic_name)) {
-                epics_[epic_name] = EpicPtr(new Epic(epic_node));
+            auto pepic = EpicPtr(new Epic(epic_node));
+            if (!epic_exist(epic_name) && pepic->status() == VALUE::todo) {
+                epics_[epic_name] = pepic; 
+            } else if (pepic->status() == VALUE::arch 
+                && arch_epics_.count(epic_name) == 0) {
+                arch_epics_[epic_name] = pepic;
             }
-            
         }
     }
 

@@ -300,7 +300,9 @@ protected:
             epics.push_back(std::make_pair(it.first, it.second->id()));
         }
 
-        std::sort(epics.begin(), epics.end());
+        std::sort(epics.begin(), epics.end(), [](auto& lhs, auto& rhs) {
+            return util::to_lower(lhs.first) < util::to_lower(rhs.first);
+        });
 
         table_.add_row({TAG::id, TAG::title});
         for (auto& it : epics) {
@@ -329,6 +331,7 @@ protected:
         for (auto& ptask : taskbook_.tasks()) {
             if (ptask->status() != VALUE::done) continue;
             auto cur_epic = ptask->epic();
+            if (taskbook_.is_arch(cur_epic)) continue;
             if (latest_tasks.count(cur_epic) == 0) {
                 latest_tasks[cur_epic] = ptask->date();
             } else if (latest_tasks.at(cur_epic) < ptask->date()) {
