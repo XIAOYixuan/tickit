@@ -238,7 +238,7 @@ public:
             // next week
         }
         cur_date = locate_monday(cur_date);
-        cmd.pop_back();
+        // cmd.pop_back();
         print_duration(cur_date, 7, cmd);
     }
 

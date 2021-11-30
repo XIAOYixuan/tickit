@@ -157,6 +157,7 @@ public:
         tabulate::Table title;
         std::stringstream ss;
         ss << date_ << " " << date_.to_weekday();
+        DLOG(INFO) << "debug time " << ss.str();
         title.add_row({ss.str()});
         title.format()
             .font_style({tabulate::FontStyle::underline})

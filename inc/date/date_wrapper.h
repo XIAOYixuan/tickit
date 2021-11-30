@@ -188,15 +188,15 @@ DateW DateW::to_date(std::string s) {
         return ret;
     }
 }
-std::vector<int> DateW::days_in_month_ = std::vector<int>{31,28,31,30,31,30,31,31,30,31,30,31};
+std::vector<int> DateW::days_in_month_ = std::vector<int>{0, 31,28,31,30,31,30,31,31,30,31,30,31};
 std::ostream& operator<<(std::ostream& os, const DateW& dt) {
-        os << dt.year_ << "." << dt.month_ << "." << dt.day_;
+        os << std::to_string(dt.year_) << "." << dt.month_ << "." << dt.day_;
         return os;
 }
 
 DateW operator+(const DateW& lhs, uint days) {
     auto ret = lhs;
-    for (uint i = 0; i < days; ++i) {
+    for (uint i = 1; i <= days; ++i) {
         ret.add_one_day();
     }
     return ret; 
