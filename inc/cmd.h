@@ -48,6 +48,11 @@ public:
             CHECK(false) << "todo: list roadmap" << std::endl; 
         } else if (text[0] == "tick") {
             ptask_handler_->tick(text);
+        } else if (text[0] == "touch") {
+            ptask_handler_->touch(text);
+        } else if (text[0] == "ref") {
+            // refresh
+            ptask_handler_->refresh(text);
         } else if (text[0] == "drop") {
             // drop id
             ptask_handler_->drop(text);

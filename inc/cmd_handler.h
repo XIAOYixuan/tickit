@@ -273,8 +273,40 @@ public:
     void tick(std::vector<std::string>& cmd) {
         // tick id
         auto ptask = taskbook_.get_task_by_id(cmd[1]);
-        CHECK(ptask->status() == VALUE::todo);
+        CHECK(ptask->status() == VALUE::todo
+            || ptask->status() == VALUE::wip);
         ptask->set_status(VALUE::done);
+        InfoTask info(calendar_, taskbook_.epics(), DateW::today());
+    }
+
+    // TODO: template? 
+    void touch(std::vector<std::string>& cmd) {
+        // tick id
+        auto ptask = taskbook_.get_task_by_id(cmd[1]);
+        CHECK(ptask->status() == VALUE::todo);
+        ptask->set_status(VALUE::wip);
+        InfoTask info(calendar_, taskbook_.epics(), DateW::today());
+    }
+
+    void refresh_all() {
+        auto ptasks = calendar_.get_tasks(DateW::today());
+        for (auto & ptask: ptasks) {
+            if (ptask->status() == VALUE::wip) {
+                ptask->set_status(VALUE::todo);
+            }
+        }
+    }
+    
+    void refresh(std::vector<std::string>& cmd) {
+        if (cmd.size() == 1) {
+            refresh_all();
+        } else {
+            for (size_t i = 1; i < cmd.size(); ++i) {
+                auto ptask = taskbook_.get_task_by_id(cmd[1]);
+                CHECK(ptask->status() == VALUE::wip);
+                ptask->set_status(VALUE::todo);
+            }
+        }
         InfoTask info(calendar_, taskbook_.epics(), DateW::today());
     }
 

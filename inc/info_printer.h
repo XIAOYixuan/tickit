@@ -127,17 +127,34 @@ public:
         }); 
 
         table_[0].format().font_style({tabulate::FontStyle::bold}).font_align(tabulate::FontAlign::center);
-        for (size_t i = 0; i < ptasks.size(); ++i) {
-            auto& ptask = ptasks[i];
+        std::vector<TaskPtr> wips;
+        size_t tend = 1;
+        for (auto ptask : ptasks) {
+            if (ptask->status() == VALUE::wip) {
+                wips.push_back(ptask);
+                continue;
+            }
             table_.add_row(
                 {std::to_string(ptask->id()), 
                     ptask->title(),
                     ptask->status(), 
                     id_epic(ptask->epic()),
                     ptask->start(), ptask->end()});
-            if (ptask->status()  == "done") {
-                table_[i+1].format().font_color(tabulate::Color::green);
+            if (ptask->status()  == VALUE::done) {
+                table_[tend].format().font_color(tabulate::Color::green);
             }
+            tend ++;
+        }
+        
+        for (auto ptask: wips) {
+            table_.add_row(
+                {std::to_string(ptask->id()), 
+                    ptask->title(),
+                    ptask->status(), 
+                    id_epic(ptask->epic()),
+                    ptask->start(), ptask->end()});
+            table_[tend].format().font_color(tabulate::Color::yellow);
+            tend++;
         }
         // table_.column(3).format().width(15);
         std::cout << table_ << std::endl;
