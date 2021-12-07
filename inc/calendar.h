@@ -52,12 +52,14 @@ public:
     };
     ~Calendar(){};
 
+    // TODO: decide which status is loadable?
     void load_tasks(TaskBook& taskbook) {
         for(auto ptask : taskbook.tasks()) {
             if (ptask->status() == VALUE::arch) {
                 archive_.push_back(ptask);
             } else if (ptask->status() == VALUE::todo
-                || ptask->status() == VALUE::done) {
+                || ptask->status() == VALUE::done
+                || ptask->status() == VALUE::wip) {
                 add_task(ptask);
             }
         }
