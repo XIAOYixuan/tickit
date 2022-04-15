@@ -1,5 +1,4 @@
-# tickit
-The product of getting bored with all those todo list\calendar\management app.
+# tickit (deprecated)
 
 ---
 A highly overfitted CLI todo program --> so if you find out this repo accidenlty, it might not suit you.
